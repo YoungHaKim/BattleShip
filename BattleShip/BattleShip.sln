@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BattleShip", "BattleShip\BattleShip.vcxproj", "{9B0667D8-28BD-4F1D-82E6-5CEB4A6D82AC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BattleShip_PP", "BattleShip_PP\BattleShip_PP.vcxproj", "{84A57FD4-E019-4AE9-9F53-2344E6F31D90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,6 +17,10 @@ Global
 		{9B0667D8-28BD-4F1D-82E6-5CEB4A6D82AC}.Debug|Win32.Build.0 = Debug|Win32
 		{9B0667D8-28BD-4F1D-82E6-5CEB4A6D82AC}.Release|Win32.ActiveCfg = Release|Win32
 		{9B0667D8-28BD-4F1D-82E6-5CEB4A6D82AC}.Release|Win32.Build.0 = Release|Win32
+		{84A57FD4-E019-4AE9-9F53-2344E6F31D90}.Debug|Win32.ActiveCfg = Debug|Win32
+		{84A57FD4-E019-4AE9-9F53-2344E6F31D90}.Debug|Win32.Build.0 = Debug|Win32
+		{84A57FD4-E019-4AE9-9F53-2344E6F31D90}.Release|Win32.ActiveCfg = Release|Win32
+		{84A57FD4-E019-4AE9-9F53-2344E6F31D90}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
