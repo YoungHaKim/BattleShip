@@ -4,13 +4,14 @@
 #include "stdafx.h"
 #include <array>
 #include <vector>
+#include <list>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	std::string strInput, strResult;
 	srand((unsigned int)time(NULL));
 
-	std::vector<std::string> ships = { "Aircraft", "Battleship", "Cruiser", "Destroyer", "Destroyer" };
+	std::vector<std::string> ships = { "Aircraft", "Battleship", "Battleship", "Cruiser", "Destroyer", "Destroyer" };
 	std::string results[] = { "HIT!", "MISS!", "DOUBLE HIT", "DESTROY!" };
 
 	do
@@ -37,7 +38,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			printf("Ships: [");
 			for (int i = 0; i < ships.size(); i++)
 			{
-				printf("%s\t", ships[i].c_str());
+				printf("%s | ", ships[i].c_str());
 			}
 			printf("]\n\n");
 
