@@ -11,7 +11,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	srand((unsigned int)time(NULL));
 
 	std::vector<std::string> ships = { "Aircraft", "Battleship", "Cruiser", "Destroyer", "Destroyer" };
-	std::string results[] = { "HIT!", "MISS!", "DESTROY!" };
+	std::string results[] = { "HIT!", "MISS!", "DOUBLE HIT", "DESTROY!" };
 
 	do
 	{
@@ -23,13 +23,13 @@ int _tmain(int argc, _TCHAR* argv[])
 		int resultIdx = rand() % _countof(results);
 		std::cout << results[resultIdx] << std::endl;
 
-		if (resultIdx == 2)
+		if (results[resultIdx] == "DESTROY!")
 		{
 			int destroyedShipIndex = rand() % ships.size();
 			printf_s("%s was destroyed\n", ships[destroyedShipIndex].c_str());
 			ships.erase(ships.begin() + destroyedShipIndex);
 
-			if (ships.size() == 0)
+			if (ships.empty())
 			{
 				break;
 			}
