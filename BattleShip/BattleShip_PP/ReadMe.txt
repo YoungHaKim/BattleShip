@@ -1,40 +1,31 @@
-========================================================================
-    CONSOLE APPLICATION : BattleShip_PP Project Overview
+﻿========================================================================
+    콘솔 응용 프로그램 : BattleShip_PP 프로젝트 개요
 ========================================================================
 
-AppWizard has created this BattleShip_PP application for you.
+응용 프로그램 마법사에서 이 BattleShip_PP 응용 프로그램을 만들었습니다.
 
-This file contains a summary of what you will find in each of the files that
-make up your BattleShip_PP application.
+BattleShip_PP 응용 프로그램을 구성하는 각 파일에 대한
+요약 설명이 포함되어 있습니다.
 
 
 BattleShip_PP.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
+    응용 프로그램 마법사를 사용하여 생성한 VC++ 프로젝트의 기본 프로젝트 파일입니다. 파일을 생성한 Visual C++ 버전에 대한 정보와 응용 프로그램 마법사를 사용하여 선택한 플랫폼, 구성 및 프로젝트 기능에 대한 정보가 포함되어 있습니다.
 
 BattleShip_PP.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
+    응용 프로그램 마법사를 사용하여 생성된 VC++ 프로젝트의 필터 파일입니다. 이 파일에는 프로젝트의 파일과 필터 간의 연결 정보가 들어 있습니다. 이러한 연결은 특정 노드에서 유사한 확장명으로 그룹화된 파일을 표시하기 위해 IDE에서 사용됩니다. 예를 들어 ".cpp" 파일은 "소스 파일" 필터와 연결되어 있습니다.
 
 BattleShip_PP.cpp
-    This is the main application source file.
+    기본 응용 프로그램 소스 파일입니다.
 
 /////////////////////////////////////////////////////////////////////////////
-Other standard files:
+기타 표준 파일:
 
 StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named BattleShip_PP.pch and a precompiled types file named StdAfx.obj.
+    이 파일은 미리 컴파일된 헤더(PCH) 파일 BattleShip_PP.pch와 미리 컴파일된 형식(PCT) 파일 StdAfx.obj를 빌드하는 데 사용됩니다.
 
 /////////////////////////////////////////////////////////////////////////////
-Other notes:
+기타 참고:
 
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
+응용 프로그램 마법사에서 사용하는 "TODO:" 주석은 사용자가 추가하거나 사용자 지정해야 하는 소스 코드 부분을 나타냅니다.
 
 /////////////////////////////////////////////////////////////////////////////

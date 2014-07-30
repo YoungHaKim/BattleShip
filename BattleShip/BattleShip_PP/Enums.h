@@ -1,0 +1,25 @@
+enum Direction
+{
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT,
+};
+
+enum HitResult
+{
+	HIT,
+	MISS,
+	DESTROY_AIRCRAFT,
+	DESTROY_BATTLESHIP,
+	DESTROY_CRUISER,
+	DESTROY_DESTROYER,
+};
+
+enum ShipType
+{
+	DESTROYER,
+	CRUISER,
+	BATTLESHIP,
+	AIRCRAFT,
+};
