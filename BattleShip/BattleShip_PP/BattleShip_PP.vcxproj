@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{709C4992-E197-44D8-961B-F8C6DB50C9D7}</ProjectGuid>
+    <ProjectGuid>{84A57FD4-E019-4AE9-9F53-2344E6F31D90}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BattleShip_PP</RootNamespace>
   </PropertyGroup>

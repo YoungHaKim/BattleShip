@@ -1,11 +1,16 @@
-// BattleShip.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
+#include "BattleShip.h"
 
 
-int _tmain(int argc, _TCHAR* argv[])
+BattleShip::BattleShip()
 {
-	return 0;
+	m_MaxHP = 4;
+	m_HP = m_MaxHP;
+	m_Type = BATTLESHIP;
+	m_Name = "BattleShip";
 }
 
+
+BattleShip::~BattleShip()
+{
+}
