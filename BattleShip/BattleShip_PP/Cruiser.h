@@ -5,5 +5,8 @@ class Cruiser : public Ship
 public:
 	Cruiser();
 	~Cruiser();
+
+
+	HitResult HitCheck(Position hitPos);
 };
 

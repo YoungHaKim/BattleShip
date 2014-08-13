@@ -13,6 +13,8 @@ enum HitResult
 {
 	HIT,
 	MISS,
+	DESTROY,
+
 	DESTROY_AIRCRAFT,
 	DESTROY_BATTLESHIP,
 	DESTROY_CRUISER,
@@ -25,4 +27,16 @@ enum ShipType
 	CRUISER = 3,
 	BATTLESHIP = 4,
 	AIRCRAFT = 5,
+};
+
+enum GameStatus
+{
+	PLAYING,
+	GAMEOVER,
+};
+
+enum Turn
+{
+	ATTACKER,
+	DEFENDER,
 };

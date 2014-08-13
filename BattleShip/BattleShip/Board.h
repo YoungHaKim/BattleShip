@@ -1,5 +1,8 @@
 #pragma once
 #include <string>
+#include "Position.h"
+
+#define HIT_FLAG_MULTIPLIER 10
 
 class Board
 {
@@ -23,5 +26,7 @@ public:
 	void AddPosition(int x, int y, int value);
 	void PrintBoard();
 	bool IsShipHere(int x, int y);
+	void ProcessAttack(Position pos);
+	bool IsAllSunk();
 };
 

@@ -1,3 +1,6 @@
+#pragma once
+#include "stdafx.h"
+
 enum Direction
 {
 	UP,
@@ -10,6 +13,8 @@ enum HitResult
 {
 	HIT,
 	MISS,
+	DESTROY,
+
 	DESTROY_AIRCRAFT,
 	DESTROY_BATTLESHIP,
 	DESTROY_CRUISER,
@@ -18,8 +23,20 @@ enum HitResult
 
 enum ShipType
 {
-	DESTROYER,
-	CRUISER,
-	BATTLESHIP,
-	AIRCRAFT,
+	DESTROYER = 2,
+	CRUISER = 3,
+	BATTLESHIP = 4,
+	AIRCRAFT = 5,
+};
+
+enum GameStatus
+{
+	PLAYING,
+	GAMEOVER,
+};
+
+enum Turn
+{
+	ATTACKER,
+	DEFENDER,
 };

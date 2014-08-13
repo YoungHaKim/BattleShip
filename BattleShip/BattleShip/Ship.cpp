@@ -21,8 +21,11 @@ void Ship::AddPosition(char x, char y)
 
 void Ship::AddPosition(Position pos)
 {
+	// normalize input
 	pos.m_X = (char)tolower(pos.m_X);
 
+
+	// Position overlap check
 	for (int i = 0; i < m_HP; i++)
 	{
 		if (m_Pos[i].m_X == pos.m_X && m_Pos[i].m_Y == pos.m_Y)
@@ -32,6 +35,8 @@ void Ship::AddPosition(Position pos)
 		}
 	}
 
+
+	// Input position into first empty slot
 	for (int i = 0; i < m_HP; i++)
 	{
 		if (m_Pos[i].m_X == 0)
@@ -56,20 +61,22 @@ HitResult Ship::HitCheck(Position hitPos)
 			m_Pos[i].m_Y = 0;
 			m_HP--;
 
-			switch (m_Type)
+			if (m_HP == 0) return DESTROY;
+
+			/*switch (m_Type)
 			{
 			case AIRCRAFT:
-				return DESTROY_AIRCRAFT;
+			return DESTROY_AIRCRAFT;
 			case BATTLESHIP:
-				return DESTROY_BATTLESHIP;
+			return DESTROY_BATTLESHIP;
 			case CRUISER:
-				return DESTROY_CRUISER;
+			return DESTROY_CRUISER;
 			case DESTROYER:
-				return DESTROY_DESTROYER;
+			return DESTROY_DESTROYER;
 			default:
-				printf_s("Ship.cpp : HitCheck - MAKE NEW CASE\n");
-				break;
-			}
+			printf_s("Ship.cpp : HitCheck - MAKE NEW CASE\n");
+			break;
+			}*/
 
 			return HIT;
 		}

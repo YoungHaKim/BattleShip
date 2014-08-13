@@ -6,6 +6,7 @@
 #include "Cruiser.h"
 #include "Destroyer.h"
 #include "Enums.h"
+#include "Position.h"
 
 class Player
 {
@@ -14,10 +15,13 @@ public:
 	~Player();
 
 public:
-	void Submit();
+	//void Submit();
 	void SetupShips(); // random location, random direction, check if within map bounds, ships can't overlap
-	void Attack();
-	void GiveUp();
+	Position Attack();
+	//void GiveUp();
+	void PrintShips();
+	void ProcessHitResult(HitResult hit);
+	HitResult DoHitCheck(Position pos);
 
 protected:
 	AirCraft	m_Aircraft;
@@ -25,13 +29,15 @@ protected:
 	Cruiser		m_Cruiser;
 	Destroyer	m_Destroyer[2];
 
-protected:
-	bool IsValidPosition(int startX, int startY, int maxHp, Direction direction);
 
+protected:
+	bool IsValidShipPosition(int startX, int startY, int maxHp, Direction direction);
+	void PlaceShip( Ship* ship , int startX , int startY , Direction direction );
+	
 private:
-	Board myBoard;
-	Board enemyBoard;
-	//Ship* shipList;
-	int type;
+	Board m_MyBoard;
+	Board m_EnemyBoard;
+	Ship* m_ShipList[5];
+	int m_Type;
 };
 

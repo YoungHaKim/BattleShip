@@ -2,7 +2,7 @@
 #include "Player.h"
 #include <time.h>
 #include <iostream>
-
+#include "Position.h"
 
 Player::Player()
 {
@@ -23,31 +23,38 @@ Player::~Player()
 
 void Player::SetupShips()
 {
+	// Set initial variables
 	int maxHeight = m_MyBoard.GetMaxHeight();
 	int maxWidth = m_MyBoard.GetMaxWidth();
 	int startX = 0;
 	int startY = 0;
 
-	srand((unsigned int)time(NULL));
-
+	// Place each ship in shiplist
 	for (int i = 0; i < _countof(m_ShipList); i++)
 	{
+		// Get ship reference
 		Ship *ship = m_ShipList[i];
 
+
+		// Set intial values
 		int maxHp = ship->GetMaxHP();
 		Direction direction = (Direction)UP;
 
 
+		// random direction & start position generation for the ship
 		do {
-			direction = (Direction)(rand() % 4);
 
+			direction = (Direction)(rand() % 4);
 			startX = rand() % maxWidth;
 			startY = rand() % maxHeight;
-		} while (!IsValidPosition(startX, startY, maxHp, direction));
+
+		} while (!IsValidShipPosition(startX, startY, maxHp, direction));	// boundary check, collision check
+
 
 		// ¹èÄ¡
 		PlaceShip(ship, startX, startY, direction);
-	}
+
+	} // continue for loop 
 
 	m_MyBoard.PrintBoard();
 }
@@ -55,15 +62,21 @@ void Player::SetupShips()
 
 void Player::PlaceShip( Ship* ship , int startX , int startY , Direction direction )
 {
-	
+	// Iterate by amount of ship Max HP
 	for( int i = 0; i < ship->GetMaxHP(); i++ )
 	{
+
+		// Convert integer coordinates to characters
 		char curX = (char)('a' + startX);
 		char curY = (char)('1' + startY);
 
+
+		// add position data to ships and to board
 		ship->AddPosition( curX , curY );
 		m_MyBoard.AddPosition(startX, startY, (int)(ship->GetShipType()));
+
 		
+		// increment coordinates based on direction
 		switch (direction)
 		{
 			case UP:	startY--;	break;
@@ -74,22 +87,26 @@ void Player::PlaceShip( Ship* ship , int startX , int startY , Direction directi
 	}
 }
 
-bool Player::IsValidPosition(int startX, int startY, int maxHp, Direction direction)
+bool Player::IsValidShipPosition(int startX, int startY, int maxHp, Direction direction)
 {
-	//coordinates start at 0,0 at the upper left	
+	// iterate by Max HP of ship
 	for (int i = 0; i < maxHp; i++)
 	{
+		// Map Boundary Check
 		if (!m_MyBoard.MapCheck(startX, startY))
 		{
 			return false;
 		}
 
+
+		// Ship Collision Check
 		if (m_MyBoard.IsShipHere(startX, startY))
 		{
-			//printf_s("\nPos %d, %d alreadys exists!\n", startX, startY);
 			return false;
 		}
 
+
+		// Direction Increment
 		switch (direction)
 		{
 			case UP:	startY--;	break;
@@ -109,4 +126,37 @@ void Player::PrintShips()
 	m_Cruiser.Print();
 	m_Destroyer[0].Print();
 	m_Destroyer[1].Print();
+}
+
+Position Player::Attack()
+{
+	Position pos;
+	pos.m_X = 'A';
+	pos.m_Y = '1';
+
+	return pos;
+}
+
+void Player::ProcessHitResult(HitResult hit)
+{
+	
+}
+
+HitResult Player::DoHitCheck(Position pos)
+{
+
+	for (int i = 0; i < _countof(m_ShipList); i++)
+	{
+		// Get ship reference
+		Ship *ship = m_ShipList[i];
+
+		HitResult hitResult = ship->HitCheck(pos);
+		
+		if (hitResult != MISS)
+		{
+			return hitResult;
+		}
+	}
+
+	return MISS;
 }
