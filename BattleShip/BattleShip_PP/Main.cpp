@@ -2,21 +2,17 @@
 //
 
 #include "stdafx.h"
-#include "Player.h"
 #include "GameManager.h"
-#include <time.h>
 
 int _tmain()
 {	
-	// set random seed
 	srand((unsigned int)time(NULL));
+	system("mode con: lines=34 cols=60");
 
 	GameManager gameManager;
-
 	gameManager.StartGame();
 
 	getchar();
-
 	return 0;
 }
 
