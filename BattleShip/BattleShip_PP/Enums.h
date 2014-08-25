@@ -39,3 +39,10 @@ enum Turn
 	DEFENDER,
 };
 
+enum PlayerType
+{	
+	HUMAN,
+	COMPUTER_RANDOM,
+	COMPUTER_AI,
+};
+

@@ -6,6 +6,7 @@
 #include "GameManager.h"
 #include <time.h>
 
+
 int _tmain()
 {	
 	// set random seed
@@ -14,6 +15,10 @@ int _tmain()
 	GameManager gameManager;
 
 	gameManager.StartGame();
+
+	
+	
+
 
 	getchar();
 

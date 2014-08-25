@@ -5,8 +5,8 @@
 
 class Board
 {
-public:
-	Board();
+public:	
+	Board(int width, int height);
 	~Board();
 
 	void SetBoardName(std::string name) { m_Name = name; }
@@ -18,10 +18,10 @@ public:
 	void PrintBoard();
 	void ProcessAttack(Position pos);
 	bool DuplCheck(int x, int y);
-	bool MapCheck(int posX, int posY);
+	bool MapBoundaryCheck(int posX, int posY);
 	bool IsShipHere(int x, int y);
 
-private:
+protected:
 	std::string m_Name;
 	int m_Width;
 	int m_Height;

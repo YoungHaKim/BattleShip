@@ -7,6 +7,9 @@
     <Filter Include="GameObject">
       <UniqueIdentifier>{c8c0b8fb-e557-4076-8822-bcbcbc0a9602}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI">
+      <UniqueIdentifier>{eb4692f4-c238-4ec1-ad6b-f0463b01380e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -42,6 +45,10 @@
     <ClInclude Include="Position.h">
       <Filter>GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="AI.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AIBoard.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AirCraft.cpp">
@@ -70,5 +77,9 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="AI.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AIBoard.cpp" />
   </ItemGroup>
 </Project>
