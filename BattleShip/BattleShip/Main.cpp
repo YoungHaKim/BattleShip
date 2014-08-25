@@ -2,26 +2,24 @@
 //
 
 #include "stdafx.h"
-#include "Player.h"
 #include "GameManager.h"
-#include <time.h>
 
+
+#include <windows.h>
+#include <iostream>
+#include <cmath>
+
+#define PI 3.14
 
 int _tmain()
 {	
-	// set random seed
 	srand((unsigned int)time(NULL));
-
+	system("mode con: lines=54 cols=60");
+		
 	GameManager gameManager;
-
 	gameManager.StartGame();
 
-	
-	
-
-
 	getchar();
-
 	return 0;
 }
 

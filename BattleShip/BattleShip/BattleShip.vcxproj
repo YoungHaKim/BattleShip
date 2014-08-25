@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9B0667D8-28BD-4F1D-82E6-5CEB4A6D82AC}</ProjectGuid>
+    <ProjectGuid>{814BB87C-088F-4083-AE2F-D2D115BC98E6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BattleShip_PP</RootNamespace>
   </PropertyGroup>
@@ -79,6 +79,8 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AI.h" />
+    <ClInclude Include="AIBoard.h" />
     <ClInclude Include="AirCraft.h" />
     <ClInclude Include="BattleShip.h" />
     <ClInclude Include="Board.h" />
@@ -93,6 +95,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AI.cpp" />
+    <ClCompile Include="AIBoard.cpp" />
     <ClCompile Include="AirCraft.cpp" />
     <ClCompile Include="BattleShip.cpp" />
     <ClCompile Include="Main.cpp" />

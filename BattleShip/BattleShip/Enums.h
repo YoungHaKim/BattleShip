@@ -1,6 +1,4 @@
 #pragma once
-#include "stdafx.h"
-
 enum Direction
 {
 	UP,
@@ -40,3 +38,11 @@ enum Turn
 	ATTACKER,
 	DEFENDER,
 };
+
+enum PlayerType
+{	
+	HUMAN,
+	COMPUTER_RANDOM,
+	COMPUTER_AI,
+};
+

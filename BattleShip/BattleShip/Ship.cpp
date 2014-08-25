@@ -11,6 +11,16 @@ Ship::~Ship()
 {
 }
 
+void Ship::Print()
+{
+	printf_s("%s HP : %d POS :[", m_Name.c_str(), m_HP);
+	for (int i = 0; i < m_MaxHP; i++)
+	{
+		printf_s(" (%c, %c) ", m_Pos[i].m_X, m_Pos[i].m_Y);
+	}
+	printf("]\n");
+}
+
 void Ship::AddPosition(char x, char y)
 {
 	Position pos;
@@ -49,52 +59,6 @@ void Ship::AddPosition(Position pos)
 	}
 }
 
-HitResult Ship::HitCheck(Position hitPos)
-{
-	hitPos.m_X = (char)tolower(hitPos.m_X);
-
-	for (int i = 0; i < m_MaxHP; i++)
-	{
-		if (m_Pos[i].m_X == hitPos.m_X && m_Pos[i].m_Y == hitPos.m_Y)
-		{
-			m_Pos[i].m_X = 0;
-			m_Pos[i].m_Y = 0;
-			m_HP--;
-
-			if (m_HP == 0) return DESTROY;
-
-			/*switch (m_Type)
-			{
-			case AIRCRAFT:
-			return DESTROY_AIRCRAFT;
-			case BATTLESHIP:
-			return DESTROY_BATTLESHIP;
-			case CRUISER:
-			return DESTROY_CRUISER;
-			case DESTROYER:
-			return DESTROY_DESTROYER;
-			default:
-			printf_s("Ship.cpp : HitCheck - MAKE NEW CASE\n");
-			break;
-			}*/
-
-			return HIT;
-		}
-	}
-
-	return MISS;
-}
-
-void Ship::Print()
-{
-	printf_s("%s HP : %d POS :[", m_Name.c_str(), m_HP);
-	for( int i = 0; i < m_MaxHP; i++ )
-	{
-		printf_s( " (%c, %c) " , m_Pos[i].m_X , m_Pos[i].m_Y );
-	}
-	printf( "]\n" );
-}
-
 /*
 Returns true if position does not already exist
 returns false if position does exist already
@@ -111,4 +75,24 @@ bool Ship::PositionCheck( int posX, int posY )
 	}
 
 	return true;
+}
+
+HitResult Ship::HitCheck(Position hitPos)
+{
+	hitPos.m_X = (char)(hitPos.m_X + 'a');
+	hitPos.m_Y = (char)(hitPos.m_Y + '1');
+
+	for (int i = 0; i < m_MaxHP; i++)
+	{
+		if (m_Pos[i].m_X == hitPos.m_X && m_Pos[i].m_Y == hitPos.m_Y)
+		{
+			m_Pos[i].m_X = 0;
+			m_Pos[i].m_Y = 0;
+			m_HP--;
+
+			if (m_HP == 0) return DESTROY;
+			return HIT;
+		}
+	}
+	return MISS;
 }

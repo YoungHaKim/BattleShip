@@ -1,36 +1,52 @@
 #include "stdafx.h"
 #include "Player.h"
-#include <time.h>
-#include <iostream>
-#include "Position.h"
+#include "AI.h"
 
-Player::Player()
+Player::Player(int boardWidth, int boardHeight)
 {
-	m_ShipList[0] = &m_Aircraft;
-	m_ShipList[1] = &m_Battleship;
-	m_ShipList[2] = &m_Cruiser;
-	m_ShipList[3] = &m_Destroyer[0];
-	m_ShipList[4] = &m_Destroyer[1];
+	m_Aircraft		= new AirCraft();
+	m_Battleship	= new BattleShip();
+	m_Cruiser		= new Cruiser();
+	m_Destroyer		= new Destroyer();
 
-	m_MyBoard.SetBoardName("MyBoard");
-	m_EnemyBoard.SetBoardName("Enemy's Board");
+	m_ShipList.reserve(5);
+	m_ShipList.push_back(m_Aircraft);
+	m_ShipList.push_back(m_Battleship);
+	m_ShipList.push_back(m_Cruiser);
+	m_ShipList.push_back(m_Destroyer);
+	m_ShipList.push_back(m_Destroyer);
+
+	m_MyBoard		= new Board(boardWidth, boardHeight);
+	m_EnemyBoard	= nullptr;
+
+	m_MyBoard->SetBoardName("MyBoard");	//플레이어 넘버 받아서 표시해야할 듯
+
+	m_RecentAttackCoord.x = -1;
+	m_RecentAttackCoord.y = -1;
+
+	m_PlayerType = COMPUTER_RANDOM;
 }
 
 
 Player::~Player()
 {
+	for (auto& i : m_ShipList)
+	{
+		delete i;
+	}
+	delete m_MyBoard;
 }
 
 void Player::SetupShips()
 {
 	// Set initial variables
-	int maxHeight = m_MyBoard.GetMaxHeight();
-	int maxWidth = m_MyBoard.GetMaxWidth();
+	int maxHeight = m_MyBoard->GetMaxHeight();
+	int maxWidth = m_MyBoard->GetMaxWidth();
 	int startX = 0;
 	int startY = 0;
 
 	// Place each ship in shiplist
-	for (int i = 0; i < _countof(m_ShipList); i++)
+	for (int i = 0; i < (int)m_ShipList.size(); i++)
 	{
 		// Get ship reference
 		Ship *ship = m_ShipList[i];
@@ -55,15 +71,114 @@ void Player::SetupShips()
 		PlaceShip(ship, startX, startY, direction);
 
 	} // continue for loop 
+}
 
-	m_MyBoard.PrintBoard();
+void Player::PrintShips()
+{
+	for (auto& i : m_ShipList)
+	{
+		i->Print();
+	}
+}
+
+void Player::SetEnemyBoard(Board* enemyBoard)
+{
+	m_EnemyBoard = enemyBoard;
 }
 
 
-void Player::PlaceShip( Ship* ship , int startX , int startY , Direction direction )
+void Player::ProcessHitResult(HitResult hit)
+{
+	switch (hit)
+	{
+	case HIT:
+		printf_s(" HIT!!");		
+		break;
+	case MISS:
+		printf_s(" MISS!!");
+		break;
+	case DESTROY:
+		printf_s(" DESTROY!!");
+		break;
+	case DESTROY_AIRCRAFT:
+		printf_s(" DESTROY_AIRCRAFT!!");
+		break;
+	case DESTROY_BATTLESHIP:
+		printf_s(" DESTROY_BATTLESHIP!!");
+		break;
+	case DESTROY_CRUISER:
+		printf_s(" DESTROY_CRUISER!!");
+		break;
+	case DESTROY_DESTROYER:
+		printf_s(" HITDESTROY_DESTROYER!!");
+		break;
+	default:
+		break;
+	}
+		
+	if (m_PlayerType == COMPUTER_AI)
+	{
+		m_AI->ProcessLastHitResult(hit, m_RecentAttackCoord);
+	}
+}
+
+Position Player::Attack()
+{
+	if (m_PlayerType == COMPUTER_AI)
+	{
+		m_AI->ShowAIBoard();
+
+		Coordinate coord = m_AI->ComputeNextAttack();
+		m_RecentAttackCoord = coord;
+
+		Position pos;
+		pos.m_X = (char)coord.x;
+		pos.m_Y = (char)coord.y;
+		return pos;
+	}
+	else
+	{
+
+		Position pos;
+		int maxHeight = m_MyBoard->GetMaxHeight();
+		int maxWidth = m_MyBoard->GetMaxWidth();
+
+		do{
+			pos.m_X = (char)(rand() % maxWidth);
+			pos.m_Y = (char)(rand() % maxHeight);
+
+		} while (!m_EnemyBoard->DuplCheck(pos.m_X, pos.m_Y));
+
+		return pos;
+	}
+}
+
+HitResult Player::DoHitCheck(Position pos)
+{
+	for (int i = 0; i < (int)m_ShipList.size(); i++)
+	{
+		HitResult hitResult = m_ShipList[i]->HitCheck(pos);
+		
+		if (hitResult != MISS)
+			return hitResult;
+	}
+	return MISS;
+}
+
+bool Player::IsAllSunk()
+{
+	for (auto& i : m_ShipList)
+	{
+		if (i->GetHP() != 0)
+			return false;
+	}
+	return true;
+}
+
+void Player::PlaceShip(Ship* ship, int startX, int startY, Direction direction)
 {
 	// Iterate by amount of ship Max HP
-	for( int i = 0; i < ship->GetMaxHP(); i++ )
+	for (int i = 0; i < ship->GetMaxHP(); i++)
 	{
 
 		// Convert integer coordinates to characters
@@ -72,17 +187,17 @@ void Player::PlaceShip( Ship* ship , int startX , int startY , Direction directi
 
 
 		// add position data to ships and to board
-		ship->AddPosition( curX , curY );
-		m_MyBoard.AddPosition(startX, startY, (int)(ship->GetShipType()));
+		ship->AddPosition(curX, curY);
+		m_MyBoard->AddPosition(startX, startY, (int)(ship->GetShipType()));
 
-		
+
 		// increment coordinates based on direction
 		switch (direction)
 		{
-			case UP:	startY--;	break;
-			case DOWN:	startY++;	break;
-			case LEFT:	startX--;	break;
-			case RIGHT:	startX++;	break;
+		case UP:	startY--;	break;
+		case DOWN:	startY++;	break;
+		case LEFT:	startX--;	break;
+		case RIGHT:	startX++;	break;
 		}
 	}
 }
@@ -93,14 +208,14 @@ bool Player::IsValidShipPosition(int startX, int startY, int maxHp, Direction di
 	for (int i = 0; i < maxHp; i++)
 	{
 		// Map Boundary Check
-		if (!m_MyBoard.MapCheck(startX, startY))
+		if (!m_MyBoard->MapBoundaryCheck(startX, startY))
 		{
 			return false;
 		}
 
 
 		// Ship Collision Check
-		if (m_MyBoard.IsShipHere(startX, startY))
+		if (m_MyBoard->IsShipHere(startX, startY))
 		{
 			return false;
 		}
@@ -109,54 +224,38 @@ bool Player::IsValidShipPosition(int startX, int startY, int maxHp, Direction di
 		// Direction Increment
 		switch (direction)
 		{
-			case UP:	startY--;	break;
-			case DOWN:	startY++;	break;
-			case LEFT:	startX--;	break;
-			case RIGHT:	startX++;	break;
+		case UP:	startY--;	break;
+		case DOWN:	startY++;	break;
+		case LEFT:	startX--;	break;
+		case RIGHT:	startX++;	break;
 		}
 	}
 
 	return true;
 }
 
-void Player::PrintShips()
+void Player::SetPlayerName(std::string name)
 {
-	m_Aircraft.Print();
-	m_Battleship.Print();
-	m_Cruiser.Print();
-	m_Destroyer[0].Print();
-	m_Destroyer[1].Print();
+	m_PlayerName = name;
+	m_MyBoard->SetBoardName(m_PlayerName);
 }
 
-Position Player::Attack()
+void Player::SetPlayerType(PlayerType playerType)
 {
-	Position pos;
-	pos.m_X = 'A';
-	pos.m_Y = '1';
-
-	return pos;
-}
-
-void Player::ProcessHitResult(HitResult hit)
-{
-	
-}
-
-HitResult Player::DoHitCheck(Position pos)
-{
-
-	for (int i = 0; i < _countof(m_ShipList); i++)
+	if (m_MyBoard == nullptr)
 	{
-		// Get ship reference
-		Ship *ship = m_ShipList[i];
-
-		HitResult hitResult = ship->HitCheck(pos);
-		
-		if (hitResult != MISS)
-		{
-			return hitResult;
-		}
+		printf_s("Error! setup boards before setting player type!\n");
+		return;
 	}
 
-	return MISS;
+	m_PlayerType = playerType;
+
+	if (playerType == COMPUTER_AI)
+	{
+		if (m_AI == nullptr)
+		{
+			m_AI = new AI();
+			m_AI->SetUpBoards(m_MyBoard, m_EnemyBoard);			
+		}
+	}
 }

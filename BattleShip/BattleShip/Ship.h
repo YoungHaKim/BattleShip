@@ -1,5 +1,4 @@
 #pragma once
-#include<string>
 #include "Enums.h"
 #include "Position.h"
 
@@ -11,12 +10,12 @@ public:
 
 	void AddPosition(char x, char y);
 	void AddPosition(Position pos);
-	virtual HitResult HitCheck(Position hitPos);
-	bool PositionCheck( int posX, int posY );
-	int GetHP();
-	int GetMaxHP() { return m_MaxHP; }
 	void Print();
+	bool PositionCheck(int posX, int posY);
+	int GetHP() { return m_HP; }
+	int GetMaxHP() { return m_MaxHP; }
 	ShipType GetShipType() { return m_Type; }
+	virtual HitResult HitCheck(Position hitPos);
 	
 protected:
 	std::string m_Name;
