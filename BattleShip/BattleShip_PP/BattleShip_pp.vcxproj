@@ -79,8 +79,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AI.h" />
-    <ClInclude Include="AIBoard.h" />
     <ClInclude Include="AirCraft.h" />
     <ClInclude Include="BattleShip.h" />
     <ClInclude Include="Board.h" />
@@ -95,8 +93,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AI.cpp" />
-    <ClCompile Include="AIBoard.cpp" />
     <ClCompile Include="AirCraft.cpp" />
     <ClCompile Include="BattleShip.cpp" />
     <ClCompile Include="Main.cpp" />

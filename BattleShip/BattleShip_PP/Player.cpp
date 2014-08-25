@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
-#include "AI.h"
 
-Player::Player(int boardWidth, int boardHeight)
+Player::Player()
 {
 	m_Aircraft		= new AirCraft();
 	m_Battleship	= new BattleShip();
@@ -16,15 +15,10 @@ Player::Player(int boardWidth, int boardHeight)
 	m_ShipList.push_back(m_Destroyer);
 	m_ShipList.push_back(m_Destroyer);
 
-	m_MyBoard		= new Board(boardWidth, boardHeight);
+	m_MyBoard		= new Board();
 	m_EnemyBoard	= nullptr;
 
 	m_MyBoard->SetBoardName("MyBoard");	//플레이어 넘버 받아서 표시해야할 듯
-
-	m_RecentAttackCoord.x = -1;
-	m_RecentAttackCoord.y = -1;
-
-	m_PlayerType = COMPUTER_RANDOM;
 }
 
 
@@ -92,7 +86,7 @@ void Player::ProcessHitResult(HitResult hit)
 	switch (hit)
 	{
 	case HIT:
-		printf_s(" HIT!!");		
+		printf_s(" HIT!!");
 		break;
 	case MISS:
 		printf_s(" MISS!!");
@@ -115,42 +109,21 @@ void Player::ProcessHitResult(HitResult hit)
 	default:
 		break;
 	}
-		
-	if (m_PlayerType == COMPUTER_AI)
-	{
-		m_AI->ProcessLastHitResult(hit, m_RecentAttackCoord);
-	}
 }
 
 Position Player::Attack()
 {
-	if (m_PlayerType == COMPUTER_AI)
-	{
-		m_AI->ShowAIBoard();
+	Position pos;
+	int maxHeight = m_MyBoard->GetMaxHeight();
+	int maxWidth = m_MyBoard->GetMaxWidth();
 
-		Coordinate coord = m_AI->ComputeNextAttack();
-		m_RecentAttackCoord = coord;
+	do{
+		pos.m_X = (char)(rand() % maxWidth);
+		pos.m_Y = (char)(rand() % maxHeight);
 
-		Position pos;
-		pos.m_X = (char)coord.x;
-		pos.m_Y = (char)coord.y;
-		return pos;
-	}
-	else
-	{
+	} while (!m_EnemyBoard->DuplCheck(pos.m_X, pos.m_Y));
 
-		Position pos;
-		int maxHeight = m_MyBoard->GetMaxHeight();
-		int maxWidth = m_MyBoard->GetMaxWidth();
-
-		do{
-			pos.m_X = (char)(rand() % maxWidth);
-			pos.m_Y = (char)(rand() % maxHeight);
-
-		} while (!m_EnemyBoard->DuplCheck(pos.m_X, pos.m_Y));
-
-		return pos;
-	}
+	return pos;
 }
 
 HitResult Player::DoHitCheck(Position pos)
@@ -208,7 +181,7 @@ bool Player::IsValidShipPosition(int startX, int startY, int maxHp, Direction di
 	for (int i = 0; i < maxHp; i++)
 	{
 		// Map Boundary Check
-		if (!m_MyBoard->MapBoundaryCheck(startX, startY))
+		if (!m_MyBoard->MapCheck(startX, startY))
 		{
 			return false;
 		}
@@ -238,24 +211,4 @@ void Player::SetPlayerName(std::string name)
 {
 	m_PlayerName = name;
 	m_MyBoard->SetBoardName(m_PlayerName);
-}
-
-void Player::SetPlayerType(PlayerType playerType)
-{
-	if (m_MyBoard == nullptr)
-	{
-		printf_s("Error! setup boards before setting player type!\n");
-		return;
-	}
-
-	m_PlayerType = playerType;
-
-	if (playerType == COMPUTER_AI)
-	{
-		if (m_AI == nullptr)
-		{
-			m_AI = new AI();
-			m_AI->SetUpBoards(m_MyBoard, m_EnemyBoard);			
-		}
-	}
 }

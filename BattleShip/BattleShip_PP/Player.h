@@ -8,12 +8,10 @@
 #include "Enums.h"
 #include "Position.h"
 
-class AI;
-
 class Player
 {
 public:
-	Player(int boardWidth, int boardHeight);
+	Player();
 	~Player();
 
 	Board* GetMyBoard() { return m_MyBoard; }
@@ -27,7 +25,6 @@ public:
 	void SetEnemyBoard(Board* enemyBoard);
 	void ProcessHitResult(HitResult hit);
 	bool IsAllSunk();
-	void SetPlayerType(PlayerType playerType);
 	Position Attack();
 	HitResult DoHitCheck(Position pos);
 protected:
@@ -45,9 +42,5 @@ private:
 	Board* m_EnemyBoard;
 	std::string m_PlayerName;
 	int m_Type;
-
-	AI*			m_AI;
-	PlayerType	m_PlayerType;
-	Coordinate  m_RecentAttackCoord;
 };
 

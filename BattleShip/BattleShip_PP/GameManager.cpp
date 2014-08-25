@@ -18,51 +18,27 @@ GameManager::~GameManager()
 
 void GameManager::StartGame()
 {
-	char answer = 'y';
+	m_Attacker = new Player();
+	m_Defender = new Player();
 
-	do
-	{
+	m_Attacker->SetPlayerName("Attacker");
+	m_Defender->SetPlayerName("Defender");
 
-		int boardSizeWidth = 8;
-		int boardSizeHeight = 8;
+	m_Board_Attacker = m_Attacker->GetMyBoard();
+	m_Board_Defender = m_Defender->GetMyBoard();
+	m_Attacker->SetEnemyBoard(m_Board_Defender);
+	m_Defender->SetEnemyBoard(m_Board_Attacker);
 
-		m_Attacker = new Player(boardSizeWidth, boardSizeHeight);
-		m_Defender = new Player(boardSizeWidth, boardSizeHeight);
+	m_Attacker->SetupShips();
+	m_Defender->SetupShips();
 
-		m_Attacker->SetPlayerType(COMPUTER_AI);
+	m_Status = PLAYING;
+	m_Turn = ATTACKER;
 
-		m_Attacker->SetPlayerName("Attacker");
-		m_Defender->SetPlayerName("Defender");
+	PlayGameLoop();
 
-		m_Board_Attacker = m_Attacker->GetMyBoard();
-		m_Board_Defender = m_Defender->GetMyBoard();
-		m_Attacker->SetEnemyBoard(m_Board_Defender);
-		m_Defender->SetEnemyBoard(m_Board_Attacker);
-
-		m_Attacker->SetupShips();
-		m_Defender->SetupShips();
-
-		m_Status = PLAYING;
-		m_Turn = ATTACKER;
-
-		PlayGameLoop();
-
-		if (m_Attacker->IsAllSunk())
-		{
-			printf_s("Attacker Lost! Defender WINS!\n");
-		}
-		else
-		{
-			printf_s("Defender Lost! Attacker WINS!\n");
-		}
-
-		m_Attacker->GetMyBoard()->PrintBoard();
-		m_Attacker->GetEnemyBoard()->PrintBoard();
-
-		printf_s("Play again? 'y', 'n'\n");
-		answer = (char)getchar();
-		
-	} while (answer == 'y' || answer == 'Y');
+	m_Attacker->GetMyBoard()->PrintBoard();
+	m_Attacker->GetEnemyBoard()->PrintBoard();
 
 	//delete에서 오류가 발생하는데 이유를 모르겠음..
 	//delete m_Attacker;
@@ -82,6 +58,7 @@ void GameManager::PlayGameLoop()
 		{
 			m_Attacker->GetMyBoard()->PrintBoard();
 			m_Attacker->GetEnemyBoard()->PrintBoard();
+			getchar();	//매 턴마다 멈추기 위해
 
 			attackPosition = m_Attacker->Attack();
 			HitResult hitResult = m_Defender->DoHitCheck(attackPosition);
@@ -95,6 +72,7 @@ void GameManager::PlayGameLoop()
 		{
 			m_Attacker->GetMyBoard()->PrintBoard();
 			m_Attacker->GetEnemyBoard()->PrintBoard();
+			getchar();	//매 턴마다 멈추기 위해
 
 			attackPosition = m_Defender->Attack();
 			HitResult hitResult = m_Attacker->DoHitCheck(attackPosition);

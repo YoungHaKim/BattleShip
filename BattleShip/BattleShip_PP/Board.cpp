@@ -2,10 +2,10 @@
 #include "Board.h"
 #include "Enums.h"
 
-Board::Board(int width, int height)
+Board::Board()
 {
-	m_Width = width;
-	m_Height = height;
+	m_Width = 8;
+	m_Height = 8;
 	m_Name = "UnNamed Board";
 
 	m_Board = (int**)malloc(sizeof(int)* m_Height);
@@ -38,7 +38,7 @@ Board::~Board()
 
 void Board::AddPosition(int x, int y, int value)
 {
-	if (MapBoundaryCheck(x, y) == false)
+	if (MapCheck(x, y) == false)
 		return;
 
 	//printf_s("Adding pos %d, %d to board\n", x, y);
@@ -110,7 +110,7 @@ bool Board::DuplCheck(int x, int y)
 }
 
 
-bool Board::MapBoundaryCheck(int posX, int posY)
+bool Board::MapCheck(int posX, int posY)
 {
 	if (posX < 0 || posX >= m_Width
 		|| posY < 0 || posY >= m_Height)
@@ -121,7 +121,7 @@ bool Board::MapBoundaryCheck(int posX, int posY)
 
 bool Board::IsShipHere(int x, int y)
 {
-	if (MapBoundaryCheck(x, y) == false)
+	if (MapCheck(x, y) == false) 
 		return false;
 
 	if (m_Board[x][y] == 0) 
