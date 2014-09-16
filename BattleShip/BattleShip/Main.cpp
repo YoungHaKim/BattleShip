@@ -453,6 +453,8 @@ bool RunNetworkGame()
 	참고로 소멸시에도 자동으로 Disconnect를 호출한다.
 	*/
 	network.Disconnect();
+
+	return false;
 }
 
 int _tmain()

@@ -110,7 +110,10 @@ bool Board::DuplCheck(int x, int y)
 	else
 		return true;
 }
-
+int** Board::GetBoardRawData()
+{
+	return m_Board;
+}
 
 bool Board::MapBoundaryCheck(int posX, int posY)
 {

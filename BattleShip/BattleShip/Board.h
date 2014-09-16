@@ -2,6 +2,9 @@
 #include "Position.h"
 
 #define HIT_FLAG_MULTIPLIER 10
+#define BOARD_SIZE 64
+#define BOARD_WIDTH 8
+#define BOARD_HEIGHT 8
 
 class Board
 {
@@ -23,6 +26,7 @@ public:
 	bool IsShipHere(int x, int y);
 
 	std::string		GetBoardAsString();
+	int** GetBoardRawData();
 
 protected:
 	std::string m_Name;

@@ -18,9 +18,11 @@ public:
 	bool		IsNextAttackValid(Coordinate coordinate);
 	bool		CheckIfSunkAndMark(int x, int y, int shipSize, Direction direction);
 	bool		CheckForHitButUnsunkShips();
-	Coordinate	GetUnsunkHitCoordinate();
+	Coordinate*	GetUnsunkHitCoordinates(int* count);
+	int*		GetBoardAsIntArray();
 
 private:
 	void MarkAsSunk(int x, int y, int shipSize);
+
 };
 

@@ -54,6 +54,24 @@ void Player::SetupShips()
 
 	if (myFile.is_open() && m_PlayerType == COMPUTER_AI)
 	{
+		/*
+		LOAD RANDOM BATCH DATA
+		*/
+		/*printf_s("AI is Loading random sample data\n");
+		std::ifstream myRandomFile("randomShipPlacement.txt");
+
+		if (myRandomFile.is_open())
+		{
+			while (std::getline(myRandomFile, fileReadLine))
+			{
+				m_AI->AddRandomPlacementData(fileReadLine);
+			}
+
+		}*/
+
+		/*
+		LOAD RANDOM FOOL MAPS
+		*/
 		while (std::getline(myFile, fileReadLine))
 		{
 			shipPlacementVector.push_back(fileReadLine);
@@ -69,7 +87,7 @@ void Player::SetupShips()
 		int loadIndex = rand() % shipPlacementVector.size();
 		
 		// MAP SIZE is 64, problems with malloc
-		char positionArr[64]; 
+		char positionArr[BOARD_SIZE]; 
 
 		for (int i = 0; i < maxHeight * maxWidth; i++)
 		{
@@ -364,3 +382,10 @@ void Player::SetPlayerType(PlayerType playerType)
 	}
 }
 
+void Player::PrintAIBoard()
+{
+	if (m_PlayerType == COMPUTER_AI && m_AI != nullptr)
+	{
+		m_AI->ShowAIBoard();
+	}
+}

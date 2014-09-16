@@ -9,6 +9,8 @@ class AIBoard;
 class Board;
 class AI_HeatMap;
 
+
+
 enum ATTACK_MODE
 {
 	HUNTMODE,
@@ -27,6 +29,8 @@ public:
 	void ShowAIBoard();
 	Coordinate ComputeNextAttack();
 
+	void	AddRandomPlacementData(std::string dataStr);
+
 private:
 	Coordinate RunHuntMode();
 	Coordinate RunTargetMode();
@@ -38,8 +42,12 @@ private:
 	void AIPlanNextAttack(Coordinate potentialCoordinate);
 	Coordinate GetModifiedCoordinate(Coordinate coordinate, Direction direction);
 
+	Coordinate GetNextOverlapCoordinate();
+	int GetMapOverlapProbability();
+
 private:
 	int					m_ContinuousMissCount;
+	unsigned int		m_OverlapCandidateIndex;
 	AIBoard*			m_Enemy_AIBoard;
 	ATTACK_MODE			m_CurrentAttackMode;
 	AI_HeatMap*			m_AIHeatMap;
@@ -47,7 +55,7 @@ private:
 	std::vector<Ship*>			m_ShipsToTargetList;
 	std::vector<Coordinate>		m_TargetMode_AttackList;
 	std::vector<Coordinate>		m_HitSuccessList;
-
+	std::vector<int*>			m_PossibleRandomPlacementList;
 
 	int					GetShipSize(ShipType shipType);
 	void				HandleShipDestroyed(ShipType shipType, Coordinate lastAttackCoord);

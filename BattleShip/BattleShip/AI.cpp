@@ -87,18 +87,21 @@ void AI::HandleShipDestroyed(ShipType shipType, Coordinate lastAttackCoord)
 {
 	m_Enemy_AIBoard->MarkAsHit(lastAttackCoord);
 	m_Enemy_AIBoard->MarkAIBoardWithSunkenShip(shipType, lastAttackCoord);
-	m_AIHeatMap->ShipDestroyed(shipType);
+	m_AIHeatMap->ShipDestroyed(shipType, lastAttackCoord);
 	AIOnDestroy(lastAttackCoord);
+
+	m_TargetMode_AttackList.clear();
 
 	if (m_Enemy_AIBoard->CheckForHitButUnsunkShips() == false)
 	{
-		m_TargetMode_AttackList.clear();
+		//m_TargetMode_AttackList.clear();
 		m_CurrentAttackMode = HUNTMODE;
 	}
 }
 void AI::ShowAIBoard()
 {
 	m_Enemy_AIBoard->PrintBoard();
+	m_AIHeatMap->PrintBoard();
 }
 
 Coordinate AI::ComputeNextAttack()
@@ -128,40 +131,148 @@ Coordinate AI::ComputeNextAttack()
 
 	return nextAttackCoord;
 }
+
+// assuming we ran AI::GetMapOverlapProbability()
+// we will get the next hit candidate
+Coordinate AI::GetNextOverlapCoordinate()
+{
+	if (m_OverlapCandidateIndex < 0 || 
+		(unsigned int)m_OverlapCandidateIndex > m_PossibleRandomPlacementList.size())
+	{
+		printf_s("Error in Coordinate AI::GetNextOverlapCoordinate(), \
+				 m_OverlapCandidateIndex < 0 || m_OverlapCandidateIndex > m_PossibleRandomPlacementList.size() \n");
+		Coordinate coord;
+		coord.x = 1;
+		coord.y = 1;
+		return coord;
+	}
+
+	int* enemyMapArr = m_Enemy_AIBoard->GetBoardAsIntArray();
+	int* sampleArr = m_PossibleRandomPlacementList[m_OverlapCandidateIndex];
+
+	for (int j = 0; j < BOARD_SIZE; j++)
+	{
+		if (sampleArr[j] > 0 && enemyMapArr[j] == 0)  // ship exists in sample but we haven't targeted yet!
+		{
+			int colIndex = j % BOARD_WIDTH;
+			int rowIndex = (int)(j / BOARD_WIDTH);
+
+			Coordinate coord;
+			coord.x = rowIndex;
+			coord.y = colIndex;
+			return coord;
+		}
+	}
+
+	Coordinate coord;
+	coord.x = 1;
+	coord.y = 1;
+	return coord;
+}
+
+// returns the number of positions that overlap
+// so the max is 5 + 4 +3 + 2*2 = 16
+// Loop through the vector of samples
+// see how many positions overlap
+int AI::GetMapOverlapProbability()
+{
+	if (m_PossibleRandomPlacementList.empty()) return 0;
+
+
+	// convert enemy map into int array
+	int* enemyMapArr = m_Enemy_AIBoard->GetBoardAsIntArray();
+
+	int hitCount = 0;
+	for (int i = 0; i < BOARD_SIZE; i++)
+	{
+		if (enemyMapArr[i] > 0)
+			++hitCount;
+	}
+	if (hitCount < 1) return 0;
+
+	int indexOfMaxOverlapArr = 0;
+	int maxOverlapCount = 0;
+	
+	for (unsigned int i = 0; i < m_PossibleRandomPlacementList.size(); ++i)
+	{
+		int hitOverlapCount = 0;
+		int* sampleArr = m_PossibleRandomPlacementList[i];
+
+		for (int j = 0; j < BOARD_SIZE; j++)
+		{
+			//printf_s("sampleArr[%d]=%d, enemyMap[%d]=%d \n", j, sampleArr[j], j, enemyMapArr[j]);
+
+			if (sampleArr[j] == enemyMapArr[j]
+				&& sampleArr[j] > 0)				// count the number of overlapped non zeros
+			{
+				++hitOverlapCount;
+			}
+			else if (sampleArr[j] > 0 && enemyMapArr[j] < 0) // ship exists in sample but we missed in reality
+			{
+				continue;
+			}
+		}
+
+		if (hitOverlapCount > maxOverlapCount)
+		{
+			maxOverlapCount = hitOverlapCount;
+			indexOfMaxOverlapArr = i;
+		}
+	}
+
+	m_OverlapCandidateIndex = indexOfMaxOverlapArr;
+
+	return maxOverlapCount;
+}
 Coordinate AI::RunHuntMode()
 {
-	m_AIHeatMap->GenerateHeatMap();
+	int overlapProbability = 0; // GetMapOverlapProbability(); // THIS IS SET TO NOT USE OVERLAP FUNCTION
+	
 
-	if (m_ContinuousMissCount > 5
-		&& m_ContinuousMissCount % 2 == 0)
+	if (overlapProbability > 0
+		&& m_OverlapCandidateIndex >= 0
+		&& m_OverlapCandidateIndex < m_PossibleRandomPlacementList.size()) // over 50% certainty of overlap
 	{
-		Coordinate coord = m_AIHeatMap->GetColdestAttackCoord();
+		printf_s("AI is Utilizing random batch data!\n");
+		Coordinate coord = GetNextOverlapCoordinate();
 		return coord;
+
 	}
 	else
 	{
-		Coordinate coord = m_AIHeatMap->GetHottestAttackCoord();
-		return coord;
+		m_AIHeatMap->GenerateHeatMap(m_Enemy_AIBoard);
+
+		if (m_ContinuousMissCount > 5
+			&& m_ContinuousMissCount % 2 == 0)
+		{
+			Coordinate coord = m_AIHeatMap->GetColdestAttackCoord();
+			return coord;
+		}
+		else
+		{
+			Coordinate coord = m_AIHeatMap->GetHottestAttackCoord();
+			return coord;
+		}
 	}
-	/*int maxHeight = m_Enemy_AIBoard->GetMaxHeight();
-	int maxWidth = m_Enemy_AIBoard->GetMaxWidth();
-
-	do{
-		coord.x = rand() % maxWidth;
-		coord.y = rand() % maxHeight;
-
-	} while (!m_Enemy_AIBoard->IsNextAttackValid(coord));*/
-
-	
-	// generate heat map
-	// generate random coordinate to attack 
 }
 Coordinate AI::RunTargetMode()
 {
+	if (m_Enemy_AIBoard->CheckForHitButUnsunkShips() == false)
+	{
+		m_CurrentAttackMode = HUNTMODE;
+		return RunHuntMode();
+	}
+
+	m_AIHeatMap->GenerateTargetHeatMap(m_Enemy_AIBoard);
+	Coordinate coord = m_AIHeatMap->GetHottestAttackCoord();
+	return coord;
+
+
+	/****************/
+	/*
 	if (m_TargetMode_AttackList.empty() == true
 		&& m_Enemy_AIBoard->CheckForHitButUnsunkShips() == false)
 	{
-
 		//printf_s("AI is back to HUNT MODE!\n");
 		m_CurrentAttackMode = HUNTMODE;
 		return RunHuntMode();
@@ -169,12 +280,45 @@ Coordinate AI::RunTargetMode()
 	else if (m_TargetMode_AttackList.empty() == true
 		&& m_Enemy_AIBoard->CheckForHitButUnsunkShips() == true)
 	{
-		Coordinate unsunkHitCoordinate = m_Enemy_AIBoard->GetUnsunkHitCoordinate();
+		int unsunkCount = 0;
+		Coordinate* unsunkArr = m_Enemy_AIBoard->GetUnsunkHitCoordinates(&unsunkCount);
 
-		AIPlanNextAttack(GetModifiedCoordinate(unsunkHitCoordinate, UP));
-		AIPlanNextAttack(GetModifiedCoordinate(unsunkHitCoordinate, DOWN));
-		AIPlanNextAttack(GetModifiedCoordinate(unsunkHitCoordinate, LEFT));
-		AIPlanNextAttack(GetModifiedCoordinate(unsunkHitCoordinate, RIGHT));
+		// if more than 1 unsunk coordinates exist, determine direction
+		if (unsunkCount == 1)
+		{
+			AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[0], UP));
+			AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[0], DOWN));
+			AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[0], LEFT));
+			AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[0], RIGHT));
+		}
+		else
+		{
+			for (int i = 0; i < unsunkCount; i++)
+			{
+				AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[i], UP));
+				AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[i], DOWN));
+				AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[i], LEFT));
+				AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[i], RIGHT));
+				//int nextIndex = i + 1;
+				//if (nextIndex >= unsunkCount) break; // break if this is the last coordinate
+
+				//if (abs(unsunkArr[i].x - unsunkArr[nextIndex].x) == 1) // vertical
+				//{
+				//	AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[i], UP));
+				//	AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[i], DOWN));
+				//	AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[nextIndex], UP));
+				//	AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[nextIndex], DOWN));
+				//}
+
+				//if (abs(unsunkArr[i].y - unsunkArr[nextIndex].y) == 1) // horizontal
+				//{
+				//	AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[i], LEFT));
+				//	AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[i], RIGHT));
+				//	AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[nextIndex], LEFT));
+				//	AIPlanNextAttack(GetModifiedCoordinate(unsunkArr[nextIndex], RIGHT));
+				//}
+			}
+		}
 	}
 
 	Coordinate coord;
@@ -193,6 +337,7 @@ Coordinate AI::RunTargetMode()
 	} while (m_Enemy_AIBoard->IsNextAttackValid(coord) == false);	// if empty
 	
 	return coord;
+	*/
 }
 void AI::GenerateHeatMap()
 {
@@ -208,6 +353,7 @@ void AI::AIOnHitLogic(Coordinate hitCoordinate)
 
 	m_CurrentAttackMode = TARGETMODE;
 	m_Enemy_AIBoard->MarkAsHit(hitCoordinate);
+	m_AIHeatMap->AddHit(hitCoordinate);
 
 	m_HitSuccessList.push_back(hitCoordinate);
 
@@ -292,4 +438,17 @@ Coordinate AI::GetModifiedCoordinate(Coordinate coordinate, Direction direction)
 	}
 
 	return coordinate;
+}
+
+void AI::AddRandomPlacementData(std::string dataStr)
+{
+	int* positionArr = (int*)malloc(sizeof(int) * BOARD_SIZE);
+
+	for (int i = 0; i < BOARD_HEIGHT * BOARD_WIDTH; i++)
+	{
+		int mapValue = (int)(dataStr.c_str()[i] - '0');
+		positionArr[i] = mapValue;
+	}
+
+	m_PossibleRandomPlacementList.push_back(positionArr);
 }

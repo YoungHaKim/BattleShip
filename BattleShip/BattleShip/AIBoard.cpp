@@ -38,6 +38,38 @@ bool AIBoard::IsNextAttackValid(Coordinate coordinate)
 	return false;
 }
 
+int*	 AIBoard::GetBoardAsIntArray()
+{
+	int* boardArr = (int*)malloc(sizeof(int) * m_Width * m_Height);
+
+	for (int row = 0; row < m_Height; row++)
+	{
+		for (int col = 0; col < m_Width; col++)
+		{
+			int value = m_Board[row][col];
+			int index = row * m_Width + col;
+			// any value above 10 is a destroyed ship
+			// but for the purposes of overlap analysis,
+			// we want to include destroyed ships
+			
+			if (value < 10)
+			{
+				boardArr[index] = value;
+			}
+			else if (value >= 10)
+			{
+				boardArr[index] = value / 10;
+			}
+			else
+			{
+				printf_s("Unexpected error in AIBoard::GetBoardAsIntArray()\n\n");
+			}
+		}
+	}
+
+	return boardArr;
+}
+
 void AIBoard::MarkAsSunk(int x, int y, int shipSize)
 {
 	if (MapBoundaryCheck(x, y) == false) return;
@@ -156,22 +188,42 @@ bool AIBoard::CheckForHitButUnsunkShips()
 
 	return unsunkButHitShipExists;
 }
-Coordinate AIBoard::GetUnsunkHitCoordinate()
+Coordinate* AIBoard::GetUnsunkHitCoordinates(int* count)
 {
-	Coordinate unsunkCoordinate;
+	int itemCount = 0;
+	for (int i = 0; i < m_Height; i++)
+	{
+		for (int j = 0; j < m_Width; j++)
+		{
+			if (m_Board[i][j] == 1)
+				++itemCount;
+		}
+	}
 
+	if (itemCount == 0) return nullptr;
+
+	Coordinate* unsunkCoordinateArr = (Coordinate*)malloc(sizeof(Coordinate) * itemCount);
+
+	int arrIndex = 0;
 	for (int i = 0; i < m_Height; i++)
 	{
 		for (int j = 0; j < m_Width; j++)
 		{
 			if (m_Board[i][j] == 1)
 			{
-				unsunkCoordinate.x = i;
-				unsunkCoordinate.y = j;
+				Coordinate coord;
+				coord.x = i;
+				coord.y = j;
+				unsunkCoordinateArr[arrIndex] = coord;
+				++arrIndex;
+				
 				break;
 			}
 		}
 	}
 
-	return unsunkCoordinate;
+	*count = itemCount;
+
+	return unsunkCoordinateArr;
 }
+

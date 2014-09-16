@@ -22,6 +22,7 @@ public:
 	void			SetPlayerName(std::string name);
 	void			SetupShips(); // random location, random direction, check if within map bounds, ships can't overlap
 	void			PrintShips();
+	void			PrintAIBoard();
 	void			SetEnemyBoard(Board* enemyBoard);
 	void			ProcessHitResult(HitResult hit);
 	bool			IsAllSunk();

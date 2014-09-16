@@ -5,6 +5,8 @@
 #include "Ship.h" 
 #include "Position.h"
 
+#define DATA_GENERATE_MODE	false
+
 GameManager::GameManager()
 {
 	m_Status = GAMEOVER;
@@ -132,7 +134,9 @@ int GameManager::PlayGameLoop(bool autoFlag)
 		{
 			printf_s("\n");
 			m_Attacker->GetMyBoard()->PrintBoard();
+			m_Attacker->PrintAIBoard();
 			m_Defender->GetMyBoard()->PrintBoard();
+			
 		}
 
 		m_Status = CheckGameStatus();
@@ -148,7 +152,10 @@ int GameManager::PlayGameLoop(bool autoFlag)
 		}
 	}
 
-	printf_s("Game over! total turns: %d\n", turnCount / 2);
+	if (!DATA_GENERATE_MODE)
+	{
+		printf_s("Game over! total turns: %d\n", turnCount / 2);
+	}
 
 	if (!autoFlag)
 		printf_s("Press Enter to continue\n");
@@ -165,9 +172,11 @@ int GameManager::PlayGameLoop(bool autoFlag)
 		fileStream << m_Defender->GetMyBoard()->GetBoardAsString() << std::endl;
 		fileStream.close();
 
-
-		m_Attacker->GetMyBoard()->PrintBoard();
-		m_Defender->GetMyBoard()->PrintBoard();
+		if (!DATA_GENERATE_MODE)
+		{
+			m_Attacker->GetMyBoard()->PrintBoard();
+			m_Defender->GetMyBoard()->PrintBoard();
+		}
 		fflush(stdin);
 		//getchar();
 	}
