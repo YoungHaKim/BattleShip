@@ -19,7 +19,10 @@ public:
 	void ProcessAttack(Position pos);
 	bool DuplCheck(int x, int y);
 	bool MapBoundaryCheck(int posX, int posY);
+	bool MapBoundaryCheck(Coordinate coordinate);
 	bool IsShipHere(int x, int y);
+
+	std::string		GetBoardAsString();
 
 protected:
 	std::string m_Name;

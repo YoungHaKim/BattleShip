@@ -3,7 +3,7 @@
 class BattleShip : public Ship
 {
 public:
-	BattleShip();
+	BattleShip(int displayFlag);
 	~BattleShip();
 
 

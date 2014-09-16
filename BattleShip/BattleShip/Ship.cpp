@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "Ship.h"
 
-Ship::Ship()
+Ship::Ship(int displayFlag)
 {
 	m_HP = 0;
 	memset(m_Pos, 0, sizeof(Position)* 5);
+	m_ShipDisplayFlag = displayFlag;
 }
 
 Ship::~Ship()
@@ -27,6 +28,11 @@ void Ship::AddPosition(char x, char y)
 	pos.m_X = x;
 	pos.m_Y = y;
 	AddPosition(pos);
+}
+
+Position* Ship::GetPositionArr()
+{
+	return m_Pos;
 }
 
 void Ship::AddPosition(Position pos)
@@ -95,4 +101,24 @@ HitResult Ship::HitCheck(Position hitPos)
 		}
 	}
 	return MISS;
+}
+
+int Ship::GetShipSize(ShipType shipType)
+{
+	int shipSize = 0;
+	switch (shipType)
+	{
+	case DESTROYER: shipSize = 2;
+		break;
+	case CRUISER: shipSize = 3;
+		break;
+	case BATTLESHIP: shipSize = 4;
+		break;
+	case AIRCRAFT: shipSize = 5;
+		break;
+	default:
+		break;
+	}
+
+	return shipSize;
 }

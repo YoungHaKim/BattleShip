@@ -2,7 +2,7 @@
 #include "AirCraft.h"
 
 
-AirCraft::AirCraft()
+AirCraft::AirCraft(int displayFlag) : Ship(displayFlag)
 {
 	m_MaxHP = 5;
 	m_HP = m_MaxHP;

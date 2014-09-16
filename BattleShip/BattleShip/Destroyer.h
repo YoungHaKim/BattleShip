@@ -3,7 +3,7 @@
 class Destroyer : public Ship
 {
 public:
-	Destroyer();
+	Destroyer(int displayFlag);
 	~Destroyer();
 
 

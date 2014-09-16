@@ -2,7 +2,7 @@
 #include "BattleShip.h"
 
 
-BattleShip::BattleShip()
+BattleShip::BattleShip(int displayFlag) : Ship(displayFlag)
 {
 	m_MaxHP = 4;
 	m_HP = m_MaxHP;

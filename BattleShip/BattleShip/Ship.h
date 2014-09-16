@@ -5,7 +5,7 @@
 class Ship
 {
 public:
-	Ship();
+	Ship(int displayFlag);
 	~Ship();
 
 	void AddPosition(char x, char y);
@@ -16,6 +16,10 @@ public:
 	int GetMaxHP() { return m_MaxHP; }
 	ShipType GetShipType() { return m_Type; }
 	virtual HitResult HitCheck(Position hitPos);
+
+	static int GetShipSize(ShipType shipType);
+	Position* GetPositionArr();
+	int GetDisplayFlag() { return m_ShipDisplayFlag; }
 	
 protected:
 	std::string m_Name;
@@ -23,5 +27,6 @@ protected:
 	Position m_Pos[5];
 	int m_HP;
 	int m_MaxHP;
+	int m_ShipDisplayFlag;
 
 };

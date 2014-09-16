@@ -2,6 +2,8 @@
 #include "Board.h"
 #include "Enums.h"
 
+#include <Windows.h>
+
 Board::Board(int width, int height)
 {
 	m_Width = width;
@@ -51,7 +53,7 @@ void Board::PrintBoard()
 	HANDLE  hConsole;
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);	
 
-	printf_s("\n[ BOARD : %s ]\n\n", m_Name.c_str());
+	printf_s("\n[ BOARD : %s ]\n", m_Name.c_str());
 	
 	for (int i = 0; i <= m_Height; i++)
 	{
@@ -118,6 +120,10 @@ bool Board::MapBoundaryCheck(int posX, int posY)
 	else
 		return true;
 }
+bool Board::MapBoundaryCheck(Coordinate coordinate)
+{
+	return Board::MapBoundaryCheck(coordinate.x, coordinate.y);
+}
 
 bool Board::IsShipHere(int x, int y)
 {
@@ -129,3 +135,31 @@ bool Board::IsShipHere(int x, int y)
 	else
 		return true;
 }
+
+std::string	Board::GetBoardAsString()
+{
+	std::string boardAsStr = "";
+
+	for (int row = 0; row < m_Height; ++row)
+	{
+		for (int col = 0; col < m_Width; ++col)
+		{
+			int value = m_Board[row][col];
+			if (abs(value) > 1)
+			{
+				boardAsStr += (char)('0' + abs(value));
+			}
+			else
+			{
+				boardAsStr += "0";
+			}
+		}
+	}
+
+	return boardAsStr;
+}
+
+// Network 용 함수
+// 원래 aircraft는 55555 인데
+// 수업용 네트워크에선 11111 이다 헉
+// 바꾸어주어야 함

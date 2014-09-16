@@ -3,7 +3,7 @@
 class AirCraft : public Ship
 {
 public:
-	AirCraft();
+	AirCraft(int displayFlag);
 	~AirCraft();
 
 

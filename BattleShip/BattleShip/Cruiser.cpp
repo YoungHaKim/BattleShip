@@ -2,7 +2,7 @@
 #include "Cruiser.h"
 
 
-Cruiser::Cruiser()
+Cruiser::Cruiser(int displayFlag) : Ship(displayFlag)
 {
 	m_MaxHP = 3;
 	m_HP = m_MaxHP;

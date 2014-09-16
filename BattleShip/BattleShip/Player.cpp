@@ -4,17 +4,17 @@
 
 Player::Player(int boardWidth, int boardHeight)
 {
-	m_Aircraft		= new AirCraft();
+	/*m_Aircraft		= new AirCraft();
 	m_Battleship	= new BattleShip();
 	m_Cruiser		= new Cruiser();
-	m_Destroyer		= new Destroyer();
+	m_Destroyer		= new Destroyer();*/
 
 	m_ShipList.reserve(5);
-	m_ShipList.push_back(m_Aircraft);
-	m_ShipList.push_back(m_Battleship);
-	m_ShipList.push_back(m_Cruiser);
-	m_ShipList.push_back(m_Destroyer);
-	m_ShipList.push_back(m_Destroyer);
+	m_ShipList.push_back(new AirCraft(5));
+	m_ShipList.push_back(new BattleShip(4));
+	m_ShipList.push_back(new Cruiser(3));
+	m_ShipList.push_back(new Destroyer(2));
+	m_ShipList.push_back(new Destroyer(6));
 
 	m_MyBoard		= new Board(boardWidth, boardHeight);
 	m_EnemyBoard	= nullptr;
@@ -39,38 +39,160 @@ Player::~Player()
 
 void Player::SetupShips()
 {
+
 	// Set initial variables
 	int maxHeight = m_MyBoard->GetMaxHeight();
 	int maxWidth = m_MyBoard->GetMaxWidth();
 	int startX = 0;
 	int startY = 0;
 
-	// Place each ship in shiplist
+
+	// open ship placement file
+	std::string fileReadLine;
+	std::ifstream myFile("shipPlacement.txt");
+	std::vector<std::string> shipPlacementVector;
+
+	if (myFile.is_open() && m_PlayerType == COMPUTER_AI)
+	{
+		while (std::getline(myFile, fileReadLine))
+		{
+			shipPlacementVector.push_back(fileReadLine);
+		}
+		myFile.close();
+
+/*
+		std::cout << "File opened, positions " << shipPlacementVector.size() << std::endl
+			<< "Press any key to continue" << std::endl;
+		fflush(stdin);
+		getchar();*/
+
+		int loadIndex = rand() % shipPlacementVector.size();
+		
+		// MAP SIZE is 64, problems with malloc
+		char positionArr[64]; 
+
+		for (int i = 0; i < maxHeight * maxWidth; i++)
+		{
+			int mapValue = (int)(shipPlacementVector[loadIndex].c_str()[i] - '0');
+			positionArr[i] = mapValue;
+
+			int colIndex = i % maxWidth;
+			int rowIndex = (int)(i / maxWidth);
+
+			for (int i = 0; i < (int)m_ShipList.size(); i++)
+			{
+				// Get ship reference
+				Ship *ship = m_ShipList[i];
+				int displayFlag = ship->GetDisplayFlag();
+
+				if (displayFlag == mapValue) // the data pertains to this ship!
+				{
+					char curX = (char)('a' + rowIndex);
+					char curY = (char)('1' + colIndex);
+
+
+					// add position data to ships and to board
+					ship->AddPosition(curX, curY);
+					m_MyBoard->AddPosition(rowIndex, colIndex, displayFlag);
+
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		//std::cout << "Unable to open file";
+		
+		// Place each ship in shiplist
+		for (int i = 0; i < (int)m_ShipList.size(); i++)
+		{
+			// Get ship reference
+			Ship *ship = m_ShipList[i];
+
+
+			// Set intial values
+			int maxHp = ship->GetMaxHP();
+			Direction direction = (Direction)UP;
+
+
+			// random direction & start position generation for the ship
+			do {
+
+				direction = (Direction)(rand() % 4);
+				startX = rand() % maxWidth;
+				startY = rand() % maxHeight;
+
+			} while (!IsValidShipPosition(startX, startY, maxHp, direction));	// boundary check, collision check
+
+
+			// 배치
+			PlaceShip(ship, startX, startY, direction);
+
+		}
+	}// continue for loop 
+}
+
+// boardArray is OUT parameter!
+// mapData[x + y * MAP_WIDTH] = type; 이렇게 넣으란다 정말 욕나온다 이런 맵 배치가 어디있어! 
+void Player::CopyBoardDataIntoArray(char* boardArray, int mapSize)
+{
+	if (boardArray == nullptr)
+	{
+		printf_s("Null ptr error! boardArray is null in Player.cpp\n");
+		return;
+	}
+
+	int destroyerCount = 1;
+
 	for (int i = 0; i < (int)m_ShipList.size(); i++)
 	{
 		// Get ship reference
 		Ship *ship = m_ShipList[i];
-
-
-		// Set intial values
+		ShipType shipType = ship->GetShipType();
+		Position* posArr = ship->GetPositionArr();
 		int maxHp = ship->GetMaxHP();
-		Direction direction = (Direction)UP;
 
+		int mapFillValue = 0;
 
-		// random direction & start position generation for the ship
-		do {
+		switch (shipType)
+		{
+		case DESTROYER:
+			if (destroyerCount == 1)
+			{
+				mapFillValue = 4;
+				destroyerCount++;
+			}
+			else
+			{
+				mapFillValue = 5;
+			}
+			break;
+		case CRUISER:
+			mapFillValue = 3;
+			break;
+		case BATTLESHIP:
+			mapFillValue = 2;
+			break;
+		case AIRCRAFT:
+			mapFillValue = 1;
+			break;
+		default:
+			break;
+		}
 
-			direction = (Direction)(rand() % 4);
-			startX = rand() % maxWidth;
-			startY = rand() % maxHeight;
+		for (int i = 0; i < maxHp; i++)
+		{
+			Position pos = posArr[i];
+			int row = (int)(pos.m_X - 'a');
+			int col = (int)(pos.m_Y - '1');
+			int maxWidth = 8;
+			int arrPosition = row + maxWidth * col;
 
-		} while (!IsValidShipPosition(startX, startY, maxHp, direction));	// boundary check, collision check
+			boardArray[arrPosition] = mapFillValue;
+		}
+	}
 
-
-		// 배치
-		PlaceShip(ship, startX, startY, direction);
-
-	} // continue for loop 
 }
 
 void Player::PrintShips()
@@ -88,34 +210,7 @@ void Player::SetEnemyBoard(Board* enemyBoard)
 
 
 void Player::ProcessHitResult(HitResult hit)
-{
-	switch (hit)
-	{
-	case HIT:
-		printf_s(" HIT!!");		
-		break;
-	case MISS:
-		printf_s(" MISS!!");
-		break;
-	case DESTROY:
-		printf_s(" DESTROY!!");
-		break;
-	case DESTROY_AIRCRAFT:
-		printf_s(" DESTROY_AIRCRAFT!!");
-		break;
-	case DESTROY_BATTLESHIP:
-		printf_s(" DESTROY_BATTLESHIP!!");
-		break;
-	case DESTROY_CRUISER:
-		printf_s(" DESTROY_CRUISER!!");
-		break;
-	case DESTROY_DESTROYER:
-		printf_s(" HITDESTROY_DESTROYER!!");
-		break;
-	default:
-		break;
-	}
-		
+{		
 	if (m_PlayerType == COMPUTER_AI)
 	{
 		m_AI->ProcessLastHitResult(hit, m_RecentAttackCoord);
@@ -126,7 +221,7 @@ Position Player::Attack()
 {
 	if (m_PlayerType == COMPUTER_AI)
 	{
-		m_AI->ShowAIBoard();
+		//m_AI->ShowAIBoard();
 
 		Coordinate coord = m_AI->ComputeNextAttack();
 		m_RecentAttackCoord = coord;
@@ -188,7 +283,7 @@ void Player::PlaceShip(Ship* ship, int startX, int startY, Direction direction)
 
 		// add position data to ships and to board
 		ship->AddPosition(curX, curY);
-		m_MyBoard->AddPosition(startX, startY, (int)(ship->GetShipType()));
+		m_MyBoard->AddPosition(startX, startY, ship->GetDisplayFlag());
 
 
 		// increment coordinates based on direction
@@ -239,6 +334,10 @@ void Player::SetPlayerName(std::string name)
 	m_PlayerName = name;
 	m_MyBoard->SetBoardName(m_PlayerName);
 }
+std::string	Player::GetPlayerName()
+{
+	return m_PlayerName;
+}
 
 void Player::SetPlayerType(PlayerType playerType)
 {
@@ -255,7 +354,13 @@ void Player::SetPlayerType(PlayerType playerType)
 		if (m_AI == nullptr)
 		{
 			m_AI = new AI();
-			m_AI->SetUpBoards(m_MyBoard, m_EnemyBoard);			
+			m_AI->SetUpBoards(m_MyBoard);
+
+			for (auto ship : m_ShipList)
+			{
+				m_AI->AddShipToTargetList(ship);
+			}
 		}
 	}
 }
+

@@ -7,7 +7,7 @@
 class Ship;
 class AIBoard;
 class Board;
-
+class AI_HeatMap;
 
 enum ATTACK_MODE
 {
@@ -21,7 +21,7 @@ public:
 	AI();
 	~AI();
 	
-	void SetUpBoards(Board* myBoard, Board* enemyBoard);
+	void SetUpBoards(Board* myBoard);
 	void AddShipToTargetList(Ship* ship);
 	void ProcessLastHitResult(HitResult lastHitResult, Coordinate lastAttackCoordinate);
 	void ShowAIBoard();
@@ -39,12 +39,17 @@ private:
 	Coordinate GetModifiedCoordinate(Coordinate coordinate, Direction direction);
 
 private:
+	int					m_ContinuousMissCount;
 	AIBoard*			m_Enemy_AIBoard;
 	ATTACK_MODE			m_CurrentAttackMode;
+	AI_HeatMap*			m_AIHeatMap;
 		
 	std::vector<Ship*>			m_ShipsToTargetList;
 	std::vector<Coordinate>		m_TargetMode_AttackList;
+	std::vector<Coordinate>		m_HitSuccessList;
 
 
+	int					GetShipSize(ShipType shipType);
+	void				HandleShipDestroyed(ShipType shipType, Coordinate lastAttackCoord);
 };
 

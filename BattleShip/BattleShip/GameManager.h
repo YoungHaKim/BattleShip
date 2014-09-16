@@ -11,13 +11,15 @@ public:
 	GameManager();
 	~GameManager();
 
-	void StartGame();
+	int StartGame(bool autoFlag);
 	void TurnChange();
 	int WhoWinner();
 	int GetNowTurn();
+
 private:
-	void PlayGameLoop();
+	int PlayGameLoop(bool autoFlag);
 	void DeleteShip();
+	void PrintHitResult(HitResult hitResult);
 	GameStatus CheckGameStatus();
 
 private:

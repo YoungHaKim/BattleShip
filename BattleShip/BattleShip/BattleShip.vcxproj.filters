@@ -48,7 +48,12 @@
     <ClInclude Include="AI.h">
       <Filter>AI</Filter>
     </ClInclude>
-    <ClInclude Include="AIBoard.h" />
+    <ClInclude Include="AIBoard.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AI_HeatMap.h">
+      <Filter>AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AirCraft.cpp">
@@ -80,6 +85,11 @@
     <ClCompile Include="AI.cpp">
       <Filter>AI</Filter>
     </ClCompile>
-    <ClCompile Include="AIBoard.cpp" />
+    <ClCompile Include="AIBoard.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AI_HeatMap.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

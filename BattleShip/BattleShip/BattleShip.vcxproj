@@ -82,6 +82,7 @@
     <ClInclude Include="AI.h" />
     <ClInclude Include="AIBoard.h" />
     <ClInclude Include="AirCraft.h" />
+    <ClInclude Include="AI_HeatMap.h" />
     <ClInclude Include="BattleShip.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="Cruiser.h" />
@@ -98,6 +99,7 @@
     <ClCompile Include="AI.cpp" />
     <ClCompile Include="AIBoard.cpp" />
     <ClCompile Include="AirCraft.cpp" />
+    <ClCompile Include="AI_HeatMap.cpp" />
     <ClCompile Include="BattleShip.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Board.cpp" />
