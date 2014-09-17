@@ -37,8 +37,8 @@ int GameManager::StartGame(bool autoFlag)
 	m_Attacker->SetEnemyBoard(m_Board_Defender);
 	m_Defender->SetEnemyBoard(m_Board_Attacker);
 
-	m_Attacker->SetupShips();
-	m_Defender->SetupShips();
+	m_Attacker->SetupShips(false);
+	m_Defender->SetupShips(false);
 
 	m_Status = PLAYING;
 	m_Turn = ATTACKER;

@@ -242,7 +242,7 @@ Coordinate AI::RunHuntMode()
 	{
 		m_AIHeatMap->GenerateHeatMap(m_Enemy_AIBoard);
 
-		if (m_ContinuousMissCount > 5
+		if (m_ContinuousMissCount > 3
 			&& m_ContinuousMissCount % 2 == 0)
 		{
 			Coordinate coord = m_AIHeatMap->GetColdestAttackCoord();

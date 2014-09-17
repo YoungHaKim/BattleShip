@@ -2,6 +2,9 @@
 #include "Player.h"
 #include "AI.h"
 
+#define NO_PLACEMENT_LOWER_BOUND	2
+#define NO_PLACEMENT_UPPER_BOUND	7
+
 Player::Player(int boardWidth, int boardHeight)
 {
 	/*m_Aircraft		= new AirCraft();
@@ -36,8 +39,149 @@ Player::~Player()
 	}
 	delete m_MyBoard;
 }
+//
+//void Player::SetupShips()
+//{
+//
+//	// Set initial variables
+//	int maxHeight = m_MyBoard->GetMaxHeight();
+//	int maxWidth = m_MyBoard->GetMaxWidth();
+//	int startX = 0;
+//	int startY = 0;
+//
+//
+//	// open ship placement file
+//	std::string fileReadLine;
+//	std::ifstream myFile("shipPlacement.txt");
+//	std::vector<std::string> shipPlacementVector;
+//
+//	if (myFile.is_open() && m_PlayerType == COMPUTER_AI)
+//	{
+//		/*
+//		LOAD RANDOM BATCH DATA
+//		*/
+//		/*printf_s("AI is Loading random sample data\n");
+//		std::ifstream myRandomFile("randomShipPlacement.txt");
+//
+//		if (myRandomFile.is_open())
+//		{
+//			while (std::getline(myRandomFile, fileReadLine))
+//			{
+//				m_AI->AddRandomPlacementData(fileReadLine);
+//			}
+//
+//		}*/
+//
+//		/*
+//		LOAD RANDOM FOOL MAPS
+//		*/
+//		while (std::getline(myFile, fileReadLine))
+//		{
+//			shipPlacementVector.push_back(fileReadLine);
+//		}
+//		myFile.close();
+//
+///*
+//		std::cout << "File opened, positions " << shipPlacementVector.size() << std::endl
+//			<< "Press any key to continue" << std::endl;
+//		fflush(stdin);
+//		getchar();*/
+//
+//		int loadIndex = rand() % shipPlacementVector.size();
+//		
+//		// MAP SIZE is 64, problems with malloc
+//		char positionArr[BOARD_SIZE]; 
+//
+//		printf_s("Placing ships with batch file\n");
+//
+//		for (int i = 0; i < maxHeight * maxWidth; i++)
+//		{
+//			int mapValue = (int)(shipPlacementVector[loadIndex].c_str()[i] - '0');
+//			positionArr[i] = mapValue;
+//
+//			int colIndex = i % maxWidth;
+//			int rowIndex = (int)(i / maxWidth);
+//
+//			for (int i = 0; i < (int)m_ShipList.size(); i++)
+//			{
+//				// Get ship reference
+//				Ship *ship = m_ShipList[i];
+//				int displayFlag = ship->GetDisplayFlag();
+//
+//				if (displayFlag == mapValue) // the data pertains to this ship!
+//				{
+//					char curX = (char)('a' + rowIndex);
+//					char curY = (char)('1' + colIndex);
+//
+//
+//					// add position data to ships and to board
+//					ship->AddPosition(curX, curY);
+//					m_MyBoard->AddPosition(rowIndex, colIndex, displayFlag);
+//
+//					break;
+//				}
+//			}
+//		}
+//	}
+//	else
+//	{
+//		//std::cout << "Unable to open file";
+//		
+//		// Place each ship in shiplist
+//		for (int i = 0; i < (int)m_ShipList.size(); i++)
+//		{
+//			// Get ship reference
+//			Ship *ship = m_ShipList[i];
+//
+//			printf_s("Placing ship %d \n", ship->GetShipSize(ship->GetShipType()));
+//
+//			// Set intial values
+//			int maxHp = ship->GetMaxHP();
+//			Direction direction = (Direction)UP;
+//
+//			
+//
+//			// random direction & start position generation for the ship
+//			do {
+//
+//				//direction = (Direction)(rand() % 4);
+//				
+//					startX = rand() % maxWidth;
+//					startY = rand() % maxHeight;
+//				
+//
+//				if (IsValidShipPosition(startX, startY, maxHp, UP))
+//				{
+//					direction = UP;
+//					break;
+//				}
+//				if (IsValidShipPosition(startX, startY, maxHp, DOWN))
+//				{
+//					direction = DOWN;
+//					break;
+//				}
+//				if (IsValidShipPosition(startX, startY, maxHp, LEFT))
+//				{
+//					direction = LEFT;
+//					break;
+//				}
+//				if (IsValidShipPosition(startX, startY, maxHp, RIGHT))
+//				{
+//					direction = RIGHT;
+//					break;
+//				}
+//
+//			} while (!IsValidShipPosition(startX, startY, maxHp, direction));	// boundary check, collision check
+//
+//
+//			// 배치
+//			PlaceShip(ship, startX, startY, direction);
+//
+//		}
+//	}// continue for loop 
+//}
 
-void Player::SetupShips()
+void Player::SetupShips(bool networkPlay)
 {
 
 	// Set initial variables
@@ -46,13 +190,13 @@ void Player::SetupShips()
 	int startX = 0;
 	int startY = 0;
 
-
-	// open ship placement file
 	std::string fileReadLine;
 	std::ifstream myFile("shipPlacement.txt");
 	std::vector<std::string> shipPlacementVector;
 
-	if (myFile.is_open() && m_PlayerType == COMPUTER_AI)
+	if (networkPlay 
+		&& myFile.is_open() 
+		&& m_PlayerType == COMPUTER_AI)
 	{
 		/*
 		LOAD RANDOM BATCH DATA
@@ -62,10 +206,10 @@ void Player::SetupShips()
 
 		if (myRandomFile.is_open())
 		{
-			while (std::getline(myRandomFile, fileReadLine))
-			{
-				m_AI->AddRandomPlacementData(fileReadLine);
-			}
+		while (std::getline(myRandomFile, fileReadLine))
+		{
+		m_AI->AddRandomPlacementData(fileReadLine);
+		}
 
 		}*/
 
@@ -78,16 +222,18 @@ void Player::SetupShips()
 		}
 		myFile.close();
 
-/*
-		std::cout << "File opened, positions " << shipPlacementVector.size() << std::endl
-			<< "Press any key to continue" << std::endl;
-		fflush(stdin);
-		getchar();*/
+		/*
+				std::cout << "File opened, positions " << shipPlacementVector.size() << std::endl
+				<< "Press any key to continue" << std::endl;
+				fflush(stdin);
+				getchar();*/
 
 		int loadIndex = rand() % shipPlacementVector.size();
-		
+
 		// MAP SIZE is 64, problems with malloc
-		char positionArr[BOARD_SIZE]; 
+		char positionArr[BOARD_SIZE];
+
+		printf_s("Placing ships with batch file\n");
 
 		for (int i = 0; i < maxHeight * maxWidth; i++)
 		{
@@ -120,26 +266,50 @@ void Player::SetupShips()
 	}
 	else
 	{
-		//std::cout << "Unable to open file";
-		
 		// Place each ship in shiplist
 		for (int i = 0; i < (int)m_ShipList.size(); i++)
 		{
 			// Get ship reference
 			Ship *ship = m_ShipList[i];
 
+			//printf_s("Placing ship %d \n", ship->GetShipSize(ship->GetShipType()));
 
 			// Set intial values
 			int maxHp = ship->GetMaxHP();
 			Direction direction = (Direction)UP;
 
 
+
 			// random direction & start position generation for the ship
 			do {
 
-				direction = (Direction)(rand() % 4);
+				//direction = (Direction)(rand() % 4);
+
 				startX = rand() % maxWidth;
 				startY = rand() % maxHeight;
+
+
+				if (IsValidShipPosition(startX, startY, maxHp, UP))
+				{
+					direction = UP;
+					break;
+				}
+				if (IsValidShipPosition(startX, startY, maxHp, DOWN))
+				{
+					direction = DOWN;
+					break;
+				}
+				if (IsValidShipPosition(startX, startY, maxHp, LEFT))
+				{
+					direction = LEFT;
+					break;
+				}
+				if (IsValidShipPosition(startX, startY, maxHp, RIGHT))
+				{
+					direction = RIGHT;
+					break;
+				}
+
 
 			} while (!IsValidShipPosition(startX, startY, maxHp, direction));	// boundary check, collision check
 
@@ -148,9 +318,9 @@ void Player::SetupShips()
 			PlaceShip(ship, startX, startY, direction);
 
 		}
-	}// continue for loop 
-}
+	}
 
+}
 // boardArray is OUT parameter!
 // mapData[x + y * MAP_WIDTH] = type; 이렇게 넣으란다 정말 욕나온다 이런 맵 배치가 어디있어! 
 void Player::CopyBoardDataIntoArray(char* boardArray, int mapSize)
@@ -333,6 +503,13 @@ bool Player::IsValidShipPosition(int startX, int startY, int maxHp, Direction di
 			return false;
 		}
 
+		// X 가 3-6 사이면서 동시에 Y 도 3-6 사이에 닿인다면 배치하지 말것
+		if (maxHp >= 2) // destroyer만 랜덤//Carrier 만 아무데나 두자면 5로 수정
+		{
+			if (startX >= NO_PLACEMENT_LOWER_BOUND && startX <= NO_PLACEMENT_UPPER_BOUND
+				&& startY >= NO_PLACEMENT_LOWER_BOUND && startY <= NO_PLACEMENT_UPPER_BOUND)
+				return false;
+		}
 
 		// Direction Increment
 		switch (direction)

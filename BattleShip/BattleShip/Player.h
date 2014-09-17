@@ -20,7 +20,7 @@ public:
 	Board*			GetEnemyBoard() { return m_EnemyBoard; }
 
 	void			SetPlayerName(std::string name);
-	void			SetupShips(); // random location, random direction, check if within map bounds, ships can't overlap
+	void			SetupShips(bool networkPlay); // random location, random direction, check if within map bounds, ships can't overlap
 	void			PrintShips();
 	void			PrintAIBoard();
 	void			SetEnemyBoard(Board* enemyBoard);

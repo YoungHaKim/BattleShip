@@ -27,6 +27,7 @@
 #include "Player.h"
 
 #define PI 3.14
+#define SHOW_NETWORK_MSG	false
 
 // Server IP & Port
 const char*				IP = "10.73.42.117"; // "10.73.42.117";	// 자기 컴퓨터에서 돌릴 때는 127.0.0.1
@@ -116,7 +117,8 @@ void HandleMyAttackResult(Player* currentPlayer, const int attackResult, const i
 		return;
 	}
 
-	printf_s("Attack result is %s \n", ATTACK_RESULT_STR[attackResult]);
+	if (SHOW_NETWORK_MSG)
+		printf_s("Attack result is %s \n", ATTACK_RESULT_STR[attackResult]);
 
 	switch (attackResult)
 	{
@@ -299,7 +301,7 @@ bool RunNetworkGame()
 			Player myPlayer(MAP_WIDTH, MAP_HEIGHT);
 			myPlayer.SetPlayerName("PeterKimAI");
 			myPlayer.SetPlayerType(COMPUTER_AI);
-			myPlayer.SetupShips();
+			myPlayer.SetupShips(true);
 
 			/*
 			** 맵 제출
@@ -372,17 +374,25 @@ bool RunNetworkGame()
 					Network::AttackResultData attackResult = network.GetAttackResult();
 					if (attackResult.isMine)
 					{
-						puts("공격 결과:");
+						if (SHOW_NETWORK_MSG)
+							puts("공격 결과:");
+
 						// 자신의 공격 결과 처리 함수를 사용한다.
 						HandleMyAttackResult(&myPlayer, attackResult.attackResult, attackResult.pos.mX, attackResult.pos.mY);
 					}
 					else
 					{
-						puts("피격 결과:");
+						if (SHOW_NETWORK_MSG)
+							puts("피격 결과:");
+
 						// 자신의 공격 결과 처리 함수를 사용한다.
 						HandleOpositionAttackResult(&myPlayer, attackResult.attackResult, attackResult.pos.mX, attackResult.pos.mY);
 					}
-					printf_s("X: %d, Y: %d, RESULT: %s\n", attackResult.pos.mX, attackResult.pos.mY, ATTACK_RESULT_STR[attackResult.attackResult]);
+
+					if (SHOW_NETWORK_MSG)
+						printf_s("X: %d, Y: %d, RESULT: %s\n", 
+						attackResult.pos.mX, attackResult.pos.mY, ATTACK_RESULT_STR[attackResult.attackResult]);
+
 					break;
 				}
 
@@ -404,6 +414,9 @@ bool RunNetworkGame()
 					break;
 				}
 			}
+
+			myPlayer.GetMyBoard()->PrintBoard();
+			myPlayer.PrintAIBoard();
 
 			/*
 			** 종료후 처리
