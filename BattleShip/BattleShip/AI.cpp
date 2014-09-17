@@ -8,11 +8,13 @@
 
 AI::AI()
 {
+	m_TotalTurnCount = 0;
 	// call setup boards and add ships after creating AI class
 	m_CurrentAttackMode = TARGETMODE;
 	m_ShipsToTargetList.clear();
 	m_TargetMode_AttackList.clear();
 	m_ContinuousMissCount = 0;
+	m_AttackLogic = STANDARD;
 }
 
 
@@ -43,7 +45,10 @@ void AI::AddShipToTargetList(Ship* ship)
 	m_ShipsToTargetList.push_back(ship);
 	m_AIHeatMap->AddShip(ship);
 }
-
+void AI::SetAILogic(AttackLogic attackLogic)
+{
+	m_AttackLogic = attackLogic;
+}
 void AI::ProcessLastHitResult(HitResult lastHitResult, Coordinate lastAttackCoordinate)
 {
 	switch (lastHitResult)
@@ -106,6 +111,8 @@ void AI::ShowAIBoard()
 
 Coordinate AI::ComputeNextAttack()
 {
+	++m_TotalTurnCount;
+
 	Coordinate nextAttackCoord;
 
 	switch (m_CurrentAttackMode)
@@ -242,8 +249,9 @@ Coordinate AI::RunHuntMode()
 	{
 		m_AIHeatMap->GenerateHeatMap(m_Enemy_AIBoard);
 
-		if (m_ContinuousMissCount > 3
+		if ((m_ContinuousMissCount > 3
 			&& m_ContinuousMissCount % 2 == 0)
+			|| (m_AttackLogic == CORNERFIRST && m_TotalTurnCount < 5))
 		{
 			Coordinate coord = m_AIHeatMap->GetColdestAttackCoord();
 			return coord;

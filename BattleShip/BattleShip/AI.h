@@ -28,8 +28,8 @@ public:
 	void ProcessLastHitResult(HitResult lastHitResult, Coordinate lastAttackCoordinate);
 	void ShowAIBoard();
 	Coordinate ComputeNextAttack();
-
-	void	AddRandomPlacementData(std::string dataStr);
+	void SetAILogic(AttackLogic attackLogic);
+	void AddRandomPlacementData(std::string dataStr);
 
 private:
 	Coordinate RunHuntMode();
@@ -40,17 +40,20 @@ private:
 	void AIUpdateBoardWithMiss(Coordinate missedCoordinate);
 	void AIOnDestroy(Coordinate hitCoordinate);
 	void AIPlanNextAttack(Coordinate potentialCoordinate);
+	
 	Coordinate GetModifiedCoordinate(Coordinate coordinate, Direction direction);
 
 	Coordinate GetNextOverlapCoordinate();
 	int GetMapOverlapProbability();
 
 private:
+	int					m_TotalTurnCount;
 	int					m_ContinuousMissCount;
 	unsigned int		m_OverlapCandidateIndex;
 	AIBoard*			m_Enemy_AIBoard;
 	ATTACK_MODE			m_CurrentAttackMode;
 	AI_HeatMap*			m_AIHeatMap;
+	AttackLogic			m_AttackLogic;
 		
 	std::vector<Ship*>			m_ShipsToTargetList;
 	std::vector<Coordinate>		m_TargetMode_AttackList;

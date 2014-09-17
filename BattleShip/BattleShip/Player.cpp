@@ -2,8 +2,8 @@
 #include "Player.h"
 #include "AI.h"
 
-#define NO_PLACEMENT_LOWER_BOUND	2
-#define NO_PLACEMENT_UPPER_BOUND	7
+#define NO_PLACEMENT_LOWER_BOUND	1
+#define NO_PLACEMENT_UPPER_BOUND	6
 
 Player::Player(int boardWidth, int boardHeight)
 {
@@ -189,6 +189,7 @@ void Player::SetupShips(bool networkPlay)
 	int maxWidth = m_MyBoard->GetMaxWidth();
 	int startX = 0;
 	int startY = 0;
+
 
 	std::string fileReadLine;
 	std::ifstream myFile("shipPlacement.txt");
@@ -396,7 +397,10 @@ void Player::SetEnemyBoard(Board* enemyBoard)
 	m_EnemyBoard = enemyBoard;
 }
 
-
+void Player::SetAILogic(AttackLogic attackLogic)
+{
+	m_AI->SetAILogic(attackLogic);
+}
 void Player::ProcessHitResult(HitResult hit)
 {		
 	if (m_PlayerType == COMPUTER_AI)
@@ -504,7 +508,7 @@ bool Player::IsValidShipPosition(int startX, int startY, int maxHp, Direction di
 		}
 
 		// X 가 3-6 사이면서 동시에 Y 도 3-6 사이에 닿인다면 배치하지 말것
-		if (maxHp >= 2) // destroyer만 랜덤//Carrier 만 아무데나 두자면 5로 수정
+		if (maxHp != 2) // destroyer만 랜덤//Carrier 만 아무데나 두자면 5로 수정
 		{
 			if (startX >= NO_PLACEMENT_LOWER_BOUND && startX <= NO_PLACEMENT_UPPER_BOUND
 				&& startY >= NO_PLACEMENT_LOWER_BOUND && startY <= NO_PLACEMENT_UPPER_BOUND)

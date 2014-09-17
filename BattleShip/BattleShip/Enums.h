@@ -1,4 +1,10 @@
 #pragma once
+
+enum AttackLogic
+{
+	STANDARD,
+	CORNERFIRST,
+};
 enum Direction
 {
 	UP,

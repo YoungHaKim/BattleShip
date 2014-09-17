@@ -30,7 +30,7 @@ public:
 	Position		Attack();
 	HitResult		DoHitCheck(Position pos);
 	std::string		GetPlayerName();
-
+	void			SetAILogic(AttackLogic attackLogic);
 	void			CopyBoardDataIntoArray(char *mapData, int mapSize); // mapData is OUT parameter
 
 protected:

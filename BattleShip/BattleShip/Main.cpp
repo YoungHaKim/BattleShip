@@ -31,7 +31,7 @@
 
 // Server IP & Port
 const char*				IP = "10.73.42.117"; // "10.73.42.117";	// 자기 컴퓨터에서 돌릴 때는 127.0.0.1
-const unsigned short	PORT = 9001;
+const unsigned short	PORT = 9000;
 // Attack result string
 const char* const ATTACK_RESULT_STR[] = {
 	"No Result",
@@ -223,6 +223,8 @@ bool RunNetworkGame()
 	PacketType type;
 	ErrorType error;
 
+	
+
 	/*
 	** 네트워크 초기화
 	*/
@@ -288,6 +290,7 @@ bool RunNetworkGame()
 		network.WaitForStart(&gameStartData);
 		wprintf_s(L"매칭되었습니다. 상대방 이름: %s, 학번: %d\n", gameStartData.oppositionName, gameStartData.oppositionStudentID);
 
+		int turnCount = 0;
 		/*
 		** 게임 시작
 		맵 제출부터 게임 종료까지 n회 반복한다.
@@ -297,11 +300,28 @@ bool RunNetworkGame()
 		bool allOver = false;
 		while (!allOver)
 		{
+			turnCount = 0;
+			fflush(stdin);
+			printf_s("Select attack algorithm: (s)tandard, (c)orner first\n");
+			char result = getchar();
+			fflush(stdin);
+			AttackLogic attackLogic = STANDARD;
+
+			if (result == 'c')
+			{
+				attackLogic = CORNERFIRST;
+			}
+			else
+			{
+				attackLogic = STANDARD;
+			}
+
 			// 자신의 초기화 함수를 호출한다.
 			Player myPlayer(MAP_WIDTH, MAP_HEIGHT);
 			myPlayer.SetPlayerName("PeterKimAI");
 			myPlayer.SetPlayerType(COMPUTER_AI);
 			myPlayer.SetupShips(true);
+			myPlayer.SetAILogic(attackLogic);
 
 			/*
 			** 맵 제출
@@ -379,6 +399,26 @@ bool RunNetworkGame()
 
 						// 자신의 공격 결과 처리 함수를 사용한다.
 						HandleMyAttackResult(&myPlayer, attackResult.attackResult, attackResult.pos.mX, attackResult.pos.mY);
+
+						/*if (++turnCount == 1)
+						{
+							fflush(stdin);
+							printf_s("Select attack algorithm: (s)tandard, (c)orner first\n");
+							char result = getchar();
+							fflush(stdin);
+							AttackLogic attackLogic = STANDARD;
+
+							if (result == 'c')
+							{
+								attackLogic = CORNERFIRST;
+							}
+							else
+							{
+								attackLogic = STANDARD;
+							}
+
+							myPlayer.SetAILogic(attackLogic);
+						}*/
 					}
 					else
 					{
