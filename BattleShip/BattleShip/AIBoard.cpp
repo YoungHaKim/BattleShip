@@ -38,7 +38,7 @@ bool AIBoard::IsNextAttackValid(Coordinate coordinate)
 	return false;
 }
 
-int*	 AIBoard::GetBoardAsIntArray()
+int* AIBoard::GetBoardAsIntArray()
 {
 	int* boardArr = (int*)malloc(sizeof(int) * m_Width * m_Height);
 
@@ -69,14 +69,12 @@ int*	 AIBoard::GetBoardAsIntArray()
 
 	return boardArr;
 }
-
 void AIBoard::MarkAsSunk(int x, int y, int shipSize)
 {
 	if (MapBoundaryCheck(x, y) == false) return;
 
 	m_Board[x][y] = shipSize * 10;
 }
-
 void AIBoard::MarkAIBoardWithSunkenShip(ShipType shipType, Coordinate lastAttackCoord)
 {
 	int shipSize = Ship::GetShipSize(shipType);
@@ -86,7 +84,6 @@ void AIBoard::MarkAIBoardWithSunkenShip(ShipType shipType, Coordinate lastAttack
 	if (CheckIfSunkAndMark(lastAttackCoord.x, lastAttackCoord.y, shipSize, LEFT)) return;
 	if (CheckIfSunkAndMark(lastAttackCoord.x, lastAttackCoord.y, shipSize, RIGHT)) return;
 }
-
 bool AIBoard::CheckIfSunkAndMark(int x, int y, int shipSize, Direction direction)
 {
 	bool directionCorrect = false;
@@ -165,7 +162,6 @@ bool AIBoard::CheckIfSunkAndMark(int x, int y, int shipSize, Direction direction
 
 	return directionCorrect;
 }
-
 /*
 if unsunk but hit ship exists, then return true
 returns false if there are no hit but unsunk ships

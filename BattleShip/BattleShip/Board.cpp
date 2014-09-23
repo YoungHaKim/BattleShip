@@ -27,8 +27,6 @@ Board::Board(int width, int height)
 
 	//PrintBoard();
 }
-
-
 Board::~Board()
 {
 	for (int i = 0; i < m_Height; i++)
@@ -47,7 +45,6 @@ void Board::AddPosition(int x, int y, int value)
 		
 	m_Board[x][y] = value;
 }
-
 void Board::PrintBoard()
 {
 	HANDLE  hConsole;
@@ -94,7 +91,6 @@ void Board::PrintBoard()
 	SetConsoleTextAttribute(hConsole, 7);
 	printf_s("\n");
 }
-
 void Board::ProcessAttack(Position pos)
 {
 	if (m_Board[pos.m_X][pos.m_Y] == 0)
@@ -102,7 +98,6 @@ void Board::ProcessAttack(Position pos)
 	else
 		m_Board[pos.m_X][pos.m_Y] = -(m_Board[pos.m_X][pos.m_Y]);
 }
-
 bool Board::DuplCheck(int x, int y)
 {
 	if (m_Board[x][y] < 0)
@@ -114,7 +109,6 @@ int** Board::GetBoardRawData()
 {
 	return m_Board;
 }
-
 bool Board::MapBoundaryCheck(int posX, int posY)
 {
 	if (posX < 0 || posX >= m_Width
@@ -127,7 +121,6 @@ bool Board::MapBoundaryCheck(Coordinate coordinate)
 {
 	return Board::MapBoundaryCheck(coordinate.x, coordinate.y);
 }
-
 bool Board::IsShipHere(int x, int y)
 {
 	if (MapBoundaryCheck(x, y) == false)
@@ -138,7 +131,10 @@ bool Board::IsShipHere(int x, int y)
 	else
 		return true;
 }
-
+// Network 용 함수
+// 원래 aircraft는 55555 인데
+// 수업용 네트워크에선 11111 이다 헉
+// 바꾸어주어야 함
 std::string	Board::GetBoardAsString()
 {
 	std::string boardAsStr = "";
@@ -162,7 +158,3 @@ std::string	Board::GetBoardAsString()
 	return boardAsStr;
 }
 
-// Network 용 함수
-// 원래 aircraft는 55555 인데
-// 수업용 네트워크에선 11111 이다 헉
-// 바꾸어주어야 함

@@ -5,15 +5,14 @@
 #include "Ship.h" 
 #include "Position.h"
 
-#define DATA_GENERATE_MODE	false
+#define DATA_GENERATE_MODE	false	// AI 용 맵 데이터를 생성하는 모드인지, true라면 게임 결과조차 화면에 출력되지 않는다
+
 
 GameManager::GameManager()
 {
 	m_Status = GAMEOVER;
 	m_Turn = ATTACKER;
 }
-
-
 GameManager::~GameManager()
 {
 }
@@ -64,7 +63,6 @@ int GameManager::StartGame(bool autoFlag)
 	//delete m_Attacker;
 	//delete m_Defender;
 }
-
 int GameManager::PlayGameLoop(bool autoFlag)
 {
 	int turnCount = 0;
@@ -183,7 +181,6 @@ int GameManager::PlayGameLoop(bool autoFlag)
 
 	return turnCount / 2;
 }
-
 void GameManager::PrintHitResult(HitResult hitResult)
 {
 
@@ -214,7 +211,6 @@ void GameManager::PrintHitResult(HitResult hitResult)
 		break;
 	}
 }
-
 GameStatus GameManager::CheckGameStatus()
 {
 	if (m_Attacker->IsAllSunk() 

@@ -9,8 +9,6 @@ Cruiser::Cruiser(int displayFlag) : Ship(displayFlag)
 	m_Type = CRUISER;
 	m_Name = "Cruiser";
 }
-
-
 Cruiser::~Cruiser()
 {
 }
@@ -20,5 +18,4 @@ HitResult Cruiser::HitCheck(Position hitPos)
 	HitResult hitResult = Ship::HitCheck(hitPos);
 
 	return (hitResult == DESTROY) ? DESTROY_CRUISER : hitResult;
-	
 }

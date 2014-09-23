@@ -7,7 +7,6 @@ Ship::Ship(int displayFlag)
 	memset(m_Pos, 0, sizeof(Position)* 5);
 	m_ShipDisplayFlag = displayFlag;
 }
-
 Ship::~Ship()
 {
 }
@@ -21,7 +20,6 @@ void Ship::Print()
 	}
 	printf("]\n");
 }
-
 void Ship::AddPosition(char x, char y)
 {
 	Position pos;
@@ -29,12 +27,6 @@ void Ship::AddPosition(char x, char y)
 	pos.m_Y = y;
 	AddPosition(pos);
 }
-
-Position* Ship::GetPositionArr()
-{
-	return m_Pos;
-}
-
 void Ship::AddPosition(Position pos)
 {
 	// normalize input
@@ -82,6 +74,25 @@ bool Ship::PositionCheck( int posX, int posY )
 
 	return true;
 }
+int Ship::GetShipSize(ShipType shipType)
+{
+	int shipSize = 0;
+	switch (shipType)
+	{
+	case DESTROYER: shipSize = 2;
+		break;
+	case CRUISER: shipSize = 3;
+		break;
+	case BATTLESHIP: shipSize = 4;
+		break;
+	case AIRCRAFT: shipSize = 5;
+		break;
+	default:
+		break;
+	}
+
+	return shipSize;
+}
 
 HitResult Ship::HitCheck(Position hitPos)
 {
@@ -102,23 +113,7 @@ HitResult Ship::HitCheck(Position hitPos)
 	}
 	return MISS;
 }
-
-int Ship::GetShipSize(ShipType shipType)
+Position* Ship::GetPositionArr()
 {
-	int shipSize = 0;
-	switch (shipType)
-	{
-	case DESTROYER: shipSize = 2;
-		break;
-	case CRUISER: shipSize = 3;
-		break;
-	case BATTLESHIP: shipSize = 4;
-		break;
-	case AIRCRAFT: shipSize = 5;
-		break;
-	default:
-		break;
-	}
-
-	return shipSize;
+	return m_Pos;
 }

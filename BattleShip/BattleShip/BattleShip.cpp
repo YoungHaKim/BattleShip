@@ -9,8 +9,6 @@ BattleShip::BattleShip(int displayFlag) : Ship(displayFlag)
 	m_Type = BATTLESHIP;
 	m_Name = "BattleShip";
 }
-
-
 BattleShip::~BattleShip()
 {
 }

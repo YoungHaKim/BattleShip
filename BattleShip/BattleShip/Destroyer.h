@@ -6,7 +6,6 @@ public:
 	Destroyer(int displayFlag);
 	~Destroyer();
 
-
 	HitResult HitCheck(Position hitPos);
 };
 

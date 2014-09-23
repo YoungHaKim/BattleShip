@@ -9,8 +9,6 @@ Destroyer::Destroyer(int displayFlag) : Ship(displayFlag)
 	m_Type = DESTROYER;
 	m_Name = "Destroyer";
 }
-
-
 Destroyer::~Destroyer()
 {
 }

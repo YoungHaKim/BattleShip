@@ -6,7 +6,6 @@ public:
 	AirCraft(int displayFlag);
 	~AirCraft();
 
-
 	HitResult HitCheck(Position hitPos);
 };
 

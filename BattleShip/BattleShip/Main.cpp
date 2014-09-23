@@ -1,34 +1,25 @@
-// Main.cpp : 콘솔 응용 프로그램에 대한 진입점을 정의합니다.
-//
-
 
 #include "stdafx.h"
 
 #ifdef _DEBUG
-
-// Debug로 빌드하는 경우
-#pragma comment(lib, "BGNL_debug.lib")
-
+	// Debug로 빌드하는 경우
+	#pragma comment(lib, "BGNL_debug.lib")
 #else
-
-// Release로 빌드하는 경우
-#pragma comment(lib, "BGNL.lib")
-
+	// Release로 빌드하는 경우
+	#pragma comment(lib, "BGNL.lib")
 #endif
 
-
 #include <cmath>
-
 #include "GameManager.h"
 #include "Network.h"
 #include "PacketType.h"
 #include "ShipData.h"
-
 #include "Player.h"
 
-#define PI 3.14
-#define SHOW_NETWORK_MSG	false
+#define SHOW_NETWORK_MSG	false	// debug 용으로 네트워크 게임시 돌아오는 메세지 표시 여부
 
+//남세현 박민수 코드.. 너무 지저분하여 블럭에 다 넣음
+#ifndef NETWORK_GAME_CODE_SECTION
 // Server IP & Port
 const char*				IP = "10.73.42.117"; // "10.73.42.117";	// 자기 컴퓨터에서 돌릴 때는 127.0.0.1
 const unsigned short	PORT = 9000;
@@ -107,8 +98,6 @@ Coord MakeAttackPos()
 
 	return pos;
 }
-
-
 void HandleMyAttackResult(Player* currentPlayer, const int attackResult, const int x, const int y)
 {
 	if (currentPlayer == nullptr)
@@ -146,7 +135,6 @@ void HandleMyAttackResult(Player* currentPlayer, const int attackResult, const i
 		break;
 	}
 }
-
 void HandleOpositionAttackResult(Player* currentPlayer, const int attackResult, const int x, const int y)
 {
 	if (currentPlayer == nullptr)
@@ -155,18 +143,40 @@ void HandleOpositionAttackResult(Player* currentPlayer, const int attackResult, 
 		return;
 	}
 }
+#endif
+
+bool RunNetworkGame();
+void RunOfflineGame();
+
+int _tmain()
+{	
+	srand((unsigned int)time(NULL));
+	system("mode con: lines=3000 cols=80");
+	
+	printf_s("Play network battleship? or offline? 'n', 'o'\n");
+	char gameType = (char)getchar();
+	fflush(stdin);
+
+	if (gameType == 'n')
+	{
+		RunNetworkGame();
+	}
+	else
+	{
+		RunOfflineGame();
+	}
+
+	getchar();
+	return 0;
+}
 
 void RunOfflineGame()
 {
-
 	GameManager gameManager;
-
-
 	char answer = 'y';
 
 	do
 	{
-
 		fflush(stdin);
 		printf_s("Play Auto mode? 'y','n'\n");
 		char autoFlagChar = (char)getchar();
@@ -218,16 +228,10 @@ void RunOfflineGame()
 }
 bool RunNetworkGame()
 {
-
 	Network network;
 	PacketType type;
 	ErrorType error;
 
-	
-
-	/*
-	** 네트워크 초기화
-	*/
 	try
 	{
 		Network::Initialize();
@@ -237,11 +241,6 @@ bool RunNetworkGame()
 		puts("초기화 도중 문제가 발생했습니다.");
 		return false;
 	}
-
-	/*
-	** 서버에 연결
-	서버의 IP와 포트는 당일날 공지된다.
-	*/
 
 	try
 	{
@@ -340,8 +339,8 @@ bool RunNetworkGame()
 			error = network.SubmitMap(mapData);
 			if (error == ET_INVALID_MAP)
 				puts("유효하지 않은 맵 데이터입니다.");
-				
-			
+
+
 
 			/*
 			** 게임 루프
@@ -402,22 +401,22 @@ bool RunNetworkGame()
 
 						/*if (++turnCount == 1)
 						{
-							fflush(stdin);
-							printf_s("Select attack algorithm: (s)tandard, (c)orner first\n");
-							char result = getchar();
-							fflush(stdin);
-							AttackLogic attackLogic = STANDARD;
+						fflush(stdin);
+						printf_s("Select attack algorithm: (s)tandard, (c)orner first\n");
+						char result = getchar();
+						fflush(stdin);
+						AttackLogic attackLogic = STANDARD;
 
-							if (result == 'c')
-							{
-								attackLogic = CORNERFIRST;
-							}
-							else
-							{
-								attackLogic = STANDARD;
-							}
+						if (result == 'c')
+						{
+						attackLogic = CORNERFIRST;
+						}
+						else
+						{
+						attackLogic = STANDARD;
+						}
 
-							myPlayer.SetAILogic(attackLogic);
+						myPlayer.SetAILogic(attackLogic);
 						}*/
 					}
 					else
@@ -430,7 +429,7 @@ bool RunNetworkGame()
 					}
 
 					if (SHOW_NETWORK_MSG)
-						printf_s("X: %d, Y: %d, RESULT: %s\n", 
+						printf_s("X: %d, Y: %d, RESULT: %s\n",
 						attackResult.pos.mX, attackResult.pos.mY, ATTACK_RESULT_STR[attackResult.attackResult]);
 
 					break;
@@ -509,26 +508,3 @@ bool RunNetworkGame()
 
 	return false;
 }
-
-int _tmain()
-{	
-	srand((unsigned int)time(NULL));
-	system("mode con: lines=3000 cols=80");
-	
-	printf_s("Play network battleship? or offline? 'n', 'o'\n");
-	char gameType = (char)getchar();
-	fflush(stdin);
-
-	if (gameType == 'n')
-	{
-		RunNetworkGame();
-	}
-	else
-	{
-		RunOfflineGame();
-	}
-
-	getchar();
-	return 0;
-}
-

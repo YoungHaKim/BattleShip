@@ -12,7 +12,11 @@ enum Direction
 	LEFT,
 	RIGHT,
 };
-
+enum GameStatus
+{
+	PLAYING,
+	GAMEOVER,
+};
 enum HitResult
 {
 	HIT,
@@ -24,7 +28,12 @@ enum HitResult
 	DESTROY_CRUISER,
 	DESTROY_DESTROYER,
 };
-
+enum PlayerType
+{
+	HUMAN,
+	COMPUTER_RANDOM,
+	COMPUTER_AI,
+};
 enum ShipType
 {
 	DESTROYER = 2,
@@ -32,23 +41,10 @@ enum ShipType
 	BATTLESHIP = 4,
 	AIRCRAFT = 5,
 };
-
-enum GameStatus
-{
-	PLAYING,
-	GAMEOVER,
-};
-
 enum Turn
 {
 	ATTACKER,
 	DEFENDER,
 };
 
-enum PlayerType
-{	
-	HUMAN,
-	COMPUTER_RANDOM,
-	COMPUTER_AI,
-};
 

@@ -2,8 +2,8 @@
 #include "Player.h"
 #include "AI.h"
 
-#define NO_PLACEMENT_LOWER_BOUND	1
-#define NO_PLACEMENT_UPPER_BOUND	6
+#define NO_PLACEMENT_LOWER_BOUND	1	// to avoid placing ships in the middle of the board
+#define NO_PLACEMENT_UPPER_BOUND	6	// set a lower bound and upper bound, then no ships are placed within these rows/columns
 
 Player::Player(int boardWidth, int boardHeight)
 {
@@ -29,8 +29,6 @@ Player::Player(int boardWidth, int boardHeight)
 
 	m_PlayerType = COMPUTER_RANDOM;
 }
-
-
 Player::~Player()
 {
 	for (auto& i : m_ShipList)
@@ -39,147 +37,6 @@ Player::~Player()
 	}
 	delete m_MyBoard;
 }
-//
-//void Player::SetupShips()
-//{
-//
-//	// Set initial variables
-//	int maxHeight = m_MyBoard->GetMaxHeight();
-//	int maxWidth = m_MyBoard->GetMaxWidth();
-//	int startX = 0;
-//	int startY = 0;
-//
-//
-//	// open ship placement file
-//	std::string fileReadLine;
-//	std::ifstream myFile("shipPlacement.txt");
-//	std::vector<std::string> shipPlacementVector;
-//
-//	if (myFile.is_open() && m_PlayerType == COMPUTER_AI)
-//	{
-//		/*
-//		LOAD RANDOM BATCH DATA
-//		*/
-//		/*printf_s("AI is Loading random sample data\n");
-//		std::ifstream myRandomFile("randomShipPlacement.txt");
-//
-//		if (myRandomFile.is_open())
-//		{
-//			while (std::getline(myRandomFile, fileReadLine))
-//			{
-//				m_AI->AddRandomPlacementData(fileReadLine);
-//			}
-//
-//		}*/
-//
-//		/*
-//		LOAD RANDOM FOOL MAPS
-//		*/
-//		while (std::getline(myFile, fileReadLine))
-//		{
-//			shipPlacementVector.push_back(fileReadLine);
-//		}
-//		myFile.close();
-//
-///*
-//		std::cout << "File opened, positions " << shipPlacementVector.size() << std::endl
-//			<< "Press any key to continue" << std::endl;
-//		fflush(stdin);
-//		getchar();*/
-//
-//		int loadIndex = rand() % shipPlacementVector.size();
-//		
-//		// MAP SIZE is 64, problems with malloc
-//		char positionArr[BOARD_SIZE]; 
-//
-//		printf_s("Placing ships with batch file\n");
-//
-//		for (int i = 0; i < maxHeight * maxWidth; i++)
-//		{
-//			int mapValue = (int)(shipPlacementVector[loadIndex].c_str()[i] - '0');
-//			positionArr[i] = mapValue;
-//
-//			int colIndex = i % maxWidth;
-//			int rowIndex = (int)(i / maxWidth);
-//
-//			for (int i = 0; i < (int)m_ShipList.size(); i++)
-//			{
-//				// Get ship reference
-//				Ship *ship = m_ShipList[i];
-//				int displayFlag = ship->GetDisplayFlag();
-//
-//				if (displayFlag == mapValue) // the data pertains to this ship!
-//				{
-//					char curX = (char)('a' + rowIndex);
-//					char curY = (char)('1' + colIndex);
-//
-//
-//					// add position data to ships and to board
-//					ship->AddPosition(curX, curY);
-//					m_MyBoard->AddPosition(rowIndex, colIndex, displayFlag);
-//
-//					break;
-//				}
-//			}
-//		}
-//	}
-//	else
-//	{
-//		//std::cout << "Unable to open file";
-//		
-//		// Place each ship in shiplist
-//		for (int i = 0; i < (int)m_ShipList.size(); i++)
-//		{
-//			// Get ship reference
-//			Ship *ship = m_ShipList[i];
-//
-//			printf_s("Placing ship %d \n", ship->GetShipSize(ship->GetShipType()));
-//
-//			// Set intial values
-//			int maxHp = ship->GetMaxHP();
-//			Direction direction = (Direction)UP;
-//
-//			
-//
-//			// random direction & start position generation for the ship
-//			do {
-//
-//				//direction = (Direction)(rand() % 4);
-//				
-//					startX = rand() % maxWidth;
-//					startY = rand() % maxHeight;
-//				
-//
-//				if (IsValidShipPosition(startX, startY, maxHp, UP))
-//				{
-//					direction = UP;
-//					break;
-//				}
-//				if (IsValidShipPosition(startX, startY, maxHp, DOWN))
-//				{
-//					direction = DOWN;
-//					break;
-//				}
-//				if (IsValidShipPosition(startX, startY, maxHp, LEFT))
-//				{
-//					direction = LEFT;
-//					break;
-//				}
-//				if (IsValidShipPosition(startX, startY, maxHp, RIGHT))
-//				{
-//					direction = RIGHT;
-//					break;
-//				}
-//
-//			} while (!IsValidShipPosition(startX, startY, maxHp, direction));	// boundary check, collision check
-//
-//
-//			// ¹èÄ¡
-//			PlaceShip(ship, startX, startY, direction);
-//
-//		}
-//	}// continue for loop 
-//}
 
 void Player::SetupShips(bool networkPlay)
 {
@@ -383,7 +240,6 @@ void Player::CopyBoardDataIntoArray(char* boardArray, int mapSize)
 	}
 
 }
-
 void Player::PrintShips()
 {
 	for (auto& i : m_ShipList)
@@ -391,12 +247,10 @@ void Player::PrintShips()
 		i->Print();
 	}
 }
-
 void Player::SetEnemyBoard(Board* enemyBoard)
 {
 	m_EnemyBoard = enemyBoard;
 }
-
 void Player::SetAILogic(AttackLogic attackLogic)
 {
 	m_AI->SetAILogic(attackLogic);
@@ -406,6 +260,32 @@ void Player::ProcessHitResult(HitResult hit)
 	if (m_PlayerType == COMPUTER_AI)
 	{
 		m_AI->ProcessLastHitResult(hit, m_RecentAttackCoord);
+	}
+}
+void Player::PlaceShip(Ship* ship, int startX, int startY, Direction direction)
+{
+	// Iterate by amount of ship Max HP
+	for (int i = 0; i < ship->GetMaxHP(); i++)
+	{
+
+		// Convert integer coordinates to characters
+		char curX = (char)('a' + startX);
+		char curY = (char)('1' + startY);
+
+
+		// add position data to ships and to board
+		ship->AddPosition(curX, curY);
+		m_MyBoard->AddPosition(startX, startY, ship->GetDisplayFlag());
+
+
+		// increment coordinates based on direction
+		switch (direction)
+		{
+		case UP:	startY--;	break;
+		case DOWN:	startY++;	break;
+		case LEFT:	startX--;	break;
+		case RIGHT:	startX++;	break;
+		}
 	}
 }
 
@@ -439,7 +319,6 @@ Position Player::Attack()
 		return pos;
 	}
 }
-
 HitResult Player::DoHitCheck(Position pos)
 {
 	for (int i = 0; i < (int)m_ShipList.size(); i++)
@@ -461,34 +340,6 @@ bool Player::IsAllSunk()
 	}
 	return true;
 }
-
-void Player::PlaceShip(Ship* ship, int startX, int startY, Direction direction)
-{
-	// Iterate by amount of ship Max HP
-	for (int i = 0; i < ship->GetMaxHP(); i++)
-	{
-
-		// Convert integer coordinates to characters
-		char curX = (char)('a' + startX);
-		char curY = (char)('1' + startY);
-
-
-		// add position data to ships and to board
-		ship->AddPosition(curX, curY);
-		m_MyBoard->AddPosition(startX, startY, ship->GetDisplayFlag());
-
-
-		// increment coordinates based on direction
-		switch (direction)
-		{
-		case UP:	startY--;	break;
-		case DOWN:	startY++;	break;
-		case LEFT:	startX--;	break;
-		case RIGHT:	startX++;	break;
-		}
-	}
-}
-
 bool Player::IsValidShipPosition(int startX, int startY, int maxHp, Direction direction)
 {
 	// iterate by Max HP of ship
@@ -527,17 +378,11 @@ bool Player::IsValidShipPosition(int startX, int startY, int maxHp, Direction di
 
 	return true;
 }
-
 void Player::SetPlayerName(std::string name)
 {
 	m_PlayerName = name;
 	m_MyBoard->SetBoardName(m_PlayerName);
 }
-std::string	Player::GetPlayerName()
-{
-	return m_PlayerName;
-}
-
 void Player::SetPlayerType(PlayerType playerType)
 {
 	if (m_MyBoard == nullptr)
@@ -562,11 +407,14 @@ void Player::SetPlayerType(PlayerType playerType)
 		}
 	}
 }
-
 void Player::PrintAIBoard()
 {
 	if (m_PlayerType == COMPUTER_AI && m_AI != nullptr)
 	{
 		m_AI->ShowAIBoard();
 	}
+}
+std::string	Player::GetPlayerName()
+{
+	return m_PlayerName;
 }

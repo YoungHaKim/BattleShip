@@ -9,8 +9,6 @@ AirCraft::AirCraft(int displayFlag) : Ship(displayFlag)
 	m_Type = AIRCRAFT;
 	m_Name = "AirCraft";
 }
-
-
 AirCraft::~AirCraft()
 {
 }

@@ -6,7 +6,6 @@ public:
 	Cruiser(int displayFlag);
 	~Cruiser();
 
-
 	HitResult HitCheck(Position hitPos);
 };
 

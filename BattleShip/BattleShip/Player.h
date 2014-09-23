@@ -25,26 +25,28 @@ public:
 	void			PrintAIBoard();
 	void			SetEnemyBoard(Board* enemyBoard);
 	void			ProcessHitResult(HitResult hit);
-	bool			IsAllSunk();
 	void			SetPlayerType(PlayerType playerType);
+	void			SetAILogic(AttackLogic attackLogic);
+	void			CopyBoardDataIntoArray(char *mapData, int mapSize); // mapData is OUT parameter
+	bool			IsAllSunk();
+
 	Position		Attack();
 	HitResult		DoHitCheck(Position pos);
 	std::string		GetPlayerName();
-	void			SetAILogic(AttackLogic attackLogic);
-	void			CopyBoardDataIntoArray(char *mapData, int mapSize); // mapData is OUT parameter
+	
 
 protected:
 	void			PlaceShip(Ship* ship, int startX, int startY, Direction direction);
 	bool			IsValidShipPosition(int startX, int startY, int maxHp, Direction direction);
 
 private:
+	int					m_Type;
+	
 	std::vector<Ship*>	m_ShipList;
+	std::string			m_PlayerName;
 
 	Board*				m_MyBoard;
 	Board*				m_EnemyBoard;
-	std::string			m_PlayerName;
-	int					m_Type;
-
 	AI*					m_AI;
 	PlayerType			m_PlayerType;
 	Coordinate			m_RecentAttackCoord;

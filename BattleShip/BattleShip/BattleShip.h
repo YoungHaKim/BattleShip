@@ -6,7 +6,6 @@ public:
 	BattleShip(int displayFlag);
 	~BattleShip();
 
-
 	HitResult HitCheck(Position hitPos);
 };
 

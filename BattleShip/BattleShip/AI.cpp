@@ -16,8 +16,6 @@ AI::AI()
 	m_ContinuousMissCount = 0;
 	m_AttackLogic = STANDARD;
 }
-
-
 AI::~AI()
 {
 	delete(m_Enemy_AIBoard);
@@ -109,6 +107,61 @@ void AI::ShowAIBoard()
 	m_AIHeatMap->PrintBoard();
 }
 
+
+// returns the number of positions that overlap
+// so the max is 5 + 4 +3 + 2*2 = 16
+// Loop through the vector of samples
+// see how many positions overlap
+int AI::GetMapOverlapProbability()
+{
+	if (m_PossibleRandomPlacementList.empty()) return 0;
+
+
+	// convert enemy map into int array
+	int* enemyMapArr = m_Enemy_AIBoard->GetBoardAsIntArray();
+
+	int hitCount = 0;
+	for (int i = 0; i < BOARD_SIZE; i++)
+	{
+		if (enemyMapArr[i] > 0)
+			++hitCount;
+	}
+	if (hitCount < 1) return 0;
+
+	int indexOfMaxOverlapArr = 0;
+	int maxOverlapCount = 0;
+
+	for (unsigned int i = 0; i < m_PossibleRandomPlacementList.size(); ++i)
+	{
+		int hitOverlapCount = 0;
+		int* sampleArr = m_PossibleRandomPlacementList[i];
+
+		for (int j = 0; j < BOARD_SIZE; j++)
+		{
+			//printf_s("sampleArr[%d]=%d, enemyMap[%d]=%d \n", j, sampleArr[j], j, enemyMapArr[j]);
+
+			if (sampleArr[j] == enemyMapArr[j]
+				&& sampleArr[j] > 0)				// count the number of overlapped non zeros
+			{
+				++hitOverlapCount;
+			}
+			else if (sampleArr[j] > 0 && enemyMapArr[j] < 0) // ship exists in sample but we missed in reality
+			{
+				continue;
+			}
+		}
+
+		if (hitOverlapCount > maxOverlapCount)
+		{
+			maxOverlapCount = hitOverlapCount;
+			indexOfMaxOverlapArr = i;
+		}
+	}
+
+	m_OverlapCandidateIndex = indexOfMaxOverlapArr;
+
+	return maxOverlapCount;
+}
 Coordinate AI::ComputeNextAttack()
 {
 	++m_TotalTurnCount;
@@ -138,7 +191,6 @@ Coordinate AI::ComputeNextAttack()
 
 	return nextAttackCoord;
 }
-
 // assuming we ran AI::GetMapOverlapProbability()
 // we will get the next hit candidate
 Coordinate AI::GetNextOverlapCoordinate()
@@ -176,60 +228,27 @@ Coordinate AI::GetNextOverlapCoordinate()
 	coord.y = 1;
 	return coord;
 }
-
-// returns the number of positions that overlap
-// so the max is 5 + 4 +3 + 2*2 = 16
-// Loop through the vector of samples
-// see how many positions overlap
-int AI::GetMapOverlapProbability()
+Coordinate AI::GetModifiedCoordinate(Coordinate coordinate, Direction direction)
 {
-	if (m_PossibleRandomPlacementList.empty()) return 0;
-
-
-	// convert enemy map into int array
-	int* enemyMapArr = m_Enemy_AIBoard->GetBoardAsIntArray();
-
-	int hitCount = 0;
-	for (int i = 0; i < BOARD_SIZE; i++)
+	switch (direction)
 	{
-		if (enemyMapArr[i] > 0)
-			++hitCount;
-	}
-	if (hitCount < 1) return 0;
-
-	int indexOfMaxOverlapArr = 0;
-	int maxOverlapCount = 0;
-	
-	for (unsigned int i = 0; i < m_PossibleRandomPlacementList.size(); ++i)
-	{
-		int hitOverlapCount = 0;
-		int* sampleArr = m_PossibleRandomPlacementList[i];
-
-		for (int j = 0; j < BOARD_SIZE; j++)
-		{
-			//printf_s("sampleArr[%d]=%d, enemyMap[%d]=%d \n", j, sampleArr[j], j, enemyMapArr[j]);
-
-			if (sampleArr[j] == enemyMapArr[j]
-				&& sampleArr[j] > 0)				// count the number of overlapped non zeros
-			{
-				++hitOverlapCount;
-			}
-			else if (sampleArr[j] > 0 && enemyMapArr[j] < 0) // ship exists in sample but we missed in reality
-			{
-				continue;
-			}
-		}
-
-		if (hitOverlapCount > maxOverlapCount)
-		{
-			maxOverlapCount = hitOverlapCount;
-			indexOfMaxOverlapArr = i;
-		}
+	case UP:
+		coordinate.y--;
+		break;
+	case DOWN:
+		coordinate.y++;
+		break;
+	case LEFT:
+		coordinate.x--;
+		break;
+	case RIGHT:
+		coordinate.x++;
+		break;
+	default:
+		break;
 	}
 
-	m_OverlapCandidateIndex = indexOfMaxOverlapArr;
-
-	return maxOverlapCount;
+	return coordinate;
 }
 Coordinate AI::RunHuntMode()
 {
@@ -425,29 +444,6 @@ void AI::AIOnDestroy(Coordinate hitCoordinate)
 
 	//m_CurrentAttackMode = HUNTMODE;
 }
-Coordinate AI::GetModifiedCoordinate(Coordinate coordinate, Direction direction)
-{
-	switch (direction)
-	{
-	case UP:
-		coordinate.y--;		
-		break;
-	case DOWN:
-		coordinate.y++;
-		break;
-	case LEFT:
-		coordinate.x--;
-		break;
-	case RIGHT:
-		coordinate.x++;
-		break;
-	default:
-		break;
-	}
-
-	return coordinate;
-}
-
 void AI::AddRandomPlacementData(std::string dataStr)
 {
 	int* positionArr = (int*)malloc(sizeof(int) * BOARD_SIZE);
