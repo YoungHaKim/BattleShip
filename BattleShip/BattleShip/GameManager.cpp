@@ -15,6 +15,7 @@ GameManager::GameManager()
 }
 GameManager::~GameManager()
 {
+
 }
 
 int GameManager::StartGame(bool autoFlag)
@@ -57,11 +58,10 @@ int GameManager::StartGame(bool autoFlag)
 		}
 	}
 
-	return turnCount;
+	delete m_Attacker;
+	delete m_Defender;
 
-	//delete에서 오류가 발생하는데 이유를 모르겠음..
-	//delete m_Attacker;
-	//delete m_Defender;
+	return turnCount;
 }
 int GameManager::PlayGameLoop(bool autoFlag)
 {

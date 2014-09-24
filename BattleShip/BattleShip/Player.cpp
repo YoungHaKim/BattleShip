@@ -36,6 +36,9 @@ Player::~Player()
 		delete i;
 	}
 	delete m_MyBoard;
+
+	if (m_AI && m_PlayerType == COMPUTER_AI)
+		delete m_AI;
 }
 
 void Player::SetupShips(bool networkPlay)
@@ -395,7 +398,7 @@ void Player::SetPlayerType(PlayerType playerType)
 
 	if (playerType == COMPUTER_AI)
 	{
-		if (m_AI == nullptr)
+		if (m_AI != nullptr)
 		{
 			m_AI = new AI();
 			m_AI->SetUpBoards(m_MyBoard);

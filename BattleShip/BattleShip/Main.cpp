@@ -150,6 +150,8 @@ void RunOfflineGame();
 
 int _tmain()
 {	
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 	srand((unsigned int)time(NULL));
 	system("mode con: lines=3000 cols=80");
 	
@@ -213,6 +215,8 @@ void RunOfflineGame()
 			}
 			printf_s("Average Turns:%f, Max Turns:%d, Min Turns:%d\n",
 				(double)((double)total / (double)gameReps), max, min);
+
+			free(gameStatArr);
 		}
 		else
 		{
